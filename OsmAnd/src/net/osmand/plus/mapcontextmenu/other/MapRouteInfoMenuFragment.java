@@ -126,6 +126,13 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 				.getColor(nightMode ? R.color.ctx_menu_bottom_view_bg_dark : R.color.ctx_menu_bottom_view_bg_light));
 		bottomView.setBackgroundColor(getResources()
 				.getColor(nightMode ? R.color.ctx_menu_bottom_view_bg_dark : R.color.ctx_menu_bottom_view_bg_light));
+		if (!portrait) {
+			final TypedValue typedValueAttr = new TypedValue();
+			getMapActivity().getTheme().resolveAttribute(R.attr.left_menu_view_bg, typedValueAttr, true);
+			mainView.setBackgroundResource(typedValueAttr.resourceId);
+			mainView.setLayoutParams(new FrameLayout.LayoutParams(getResources().getDimensionPixelSize(R.dimen.dashboard_land_width),
+					ViewGroup.LayoutParams.MATCH_PARENT));
+		}
 
 		runLayoutListener();
 
