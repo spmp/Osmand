@@ -47,8 +47,6 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 	private View toolbarView;
 	private View toolbarBackButton;
 	private TextView toolbarTextView;
-	private View topButtonContainer;
-	private LockableScrollView menuScrollView;
 	private View view;
 	private View.OnLayoutChangeListener containerLayoutListener;
 
@@ -66,7 +64,6 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 	private int menuBottomViewHeight;
 	private int bottomToolbarPosY;
 	private int menuFullHeightMax;
-	private int menuTopViewHeight;
 	private int menuTitleHeight;
 	private int shadowHeight;
 	private int screenHeight;
@@ -126,6 +123,7 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 				.getColor(nightMode ? R.color.ctx_menu_bottom_view_bg_dark : R.color.ctx_menu_bottom_view_bg_light));
 		bottomView.setBackgroundColor(getResources()
 				.getColor(nightMode ? R.color.ctx_menu_bottom_view_bg_dark : R.color.ctx_menu_bottom_view_bg_light));
+
 		if (!portrait) {
 			final TypedValue typedValueAttr = new TypedValue();
 			getMapActivity().getTheme().resolveAttribute(R.attr.left_menu_view_bg, typedValueAttr, true);
@@ -744,35 +742,18 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 		} else {
 			AndroidUtils.setBackground(ctx, mainView, nightMode, R.drawable.route_info_menu_bg_left_light, R.drawable.route_info_menu_bg_left_dark);
 		}
-//		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.map_route_prepare_bottom_view), nightMode,
-//				R.color.route_info_bottom_view_bg_light, R.color.route_info_bottom_view_bg_dark);
-
-//		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.dividerModesLayout), nightMode,
-//				R.color.route_info_divider_light, R.color.route_info_divider_dark);
 		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.dividerFromDropDown), nightMode,
 				R.color.route_info_divider_light, R.color.route_info_divider_dark);
 		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.viaLayoutDivider), nightMode,
 				R.color.route_info_divider_light, R.color.route_info_divider_dark);
-//		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.dividerToDropDown), nightMode,
-//				R.color.route_info_divider_light, R.color.route_info_divider_dark);
 		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.dividerButtons), nightMode,
 				R.color.route_info_divider_light, R.color.route_info_divider_dark);
 
-//		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.dividerBtn1), nightMode,
-//				R.color.route_info_divider_light, R.color.route_info_divider_dark);
-//		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.dividerBtn2), nightMode,
-//				R.color.route_info_divider_light, R.color.route_info_divider_dark);
 
 		AndroidUtils.setTextPrimaryColor(ctx, (TextView) mainView.findViewById(R.id.ViaView), nightMode);
 		AndroidUtils.setTextSecondaryColor(ctx, (TextView) mainView.findViewById(R.id.ViaSubView), nightMode);
 		AndroidUtils.setTextSecondaryColor(ctx, (TextView) mainView.findViewById(R.id.toTitle), nightMode);
 		AndroidUtils.setTextSecondaryColor(ctx, (TextView) mainView.findViewById(R.id.fromTitle), nightMode);
-//		AndroidUtils.setTextPrimaryColor(ctx, (TextView) mainView.findViewById(R.id.InfoTextView), nightMode);
-
-//		AndroidUtils.setTextPrimaryColor(ctx, (TextView) mainView.findViewById(R.id.DistanceText), nightMode);
-//		AndroidUtils.setTextSecondaryColor(ctx, (TextView) mainView.findViewById(R.id.DistanceTitle), nightMode);
-//		AndroidUtils.setTextPrimaryColor(ctx, (TextView) mainView.findViewById(R.id.DurationText), nightMode);
-//		AndroidUtils.setTextSecondaryColor(ctx, (TextView) mainView.findViewById(R.id.DurationTitle), nightMode);
 
 		ctx.setupRouteCalculationProgressBar((ProgressBar) mainView.findViewById(R.id.progress_bar));
 	}
