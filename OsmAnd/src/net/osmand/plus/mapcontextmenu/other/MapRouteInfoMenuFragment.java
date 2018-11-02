@@ -126,11 +126,6 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 				.getColor(nightMode ? R.color.ctx_menu_bottom_view_bg_dark : R.color.ctx_menu_bottom_view_bg_light));
 		bottomView.setBackgroundColor(getResources()
 				.getColor(nightMode ? R.color.ctx_menu_bottom_view_bg_dark : R.color.ctx_menu_bottom_view_bg_light));
-		for (int i = 0; i < 200; i++) {
-			TextView textView = new TextView(mapActivity);
-			textView.setText("emm - " + i);
-			bottomView.addView(textView);
-		}
 
 		runLayoutListener();
 

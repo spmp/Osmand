@@ -12,6 +12,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.ListPopupWindow;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -509,36 +511,22 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 		ImageView viaIcon = (ImageView) parentView.findViewById(R.id.viaIcon);
 		viaIcon.setImageDrawable(getIconOrig(R.drawable.list_intermediate));
 
-		swapDirectionView.setImageDrawable(mapActivity.getMyApplication().getUIUtilities().getIcon(R.drawable.ic_action_change_navigation_points,
+		LinearLayout viaButton = (LinearLayout) parentView.findViewById(R.id.via_button);
+		ImageView viaButtonImageView = (ImageView) parentView.findViewById(R.id.via_button_image_view);
+
+		viaButtonImageView.setImageDrawable(mapActivity.getMyApplication().getUIUtilities().getIcon(R.drawable.ic_action_edit_dark,
 				isLight() ? R.color.route_info_control_icon_color_light : R.color.route_info_control_icon_color_dark));
-		swapDirectionButton.setOnClickListener(new View.OnClickListener() {
+		viaButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				TargetPointsHelper targetPointsHelper = getTargets();
-				TargetPoint startPoint = targetPointsHelper.getPointToStart();
-				TargetPoint endPoint = targetPointsHelper.getPointToNavigate();
-
-				if (startPoint == null) {
-					Location loc = mapActivity.getMyApplication().getLocationProvider().getLastKnownLocation();
-					if (loc != null) {
-						startPoint = TargetPoint.createStartPoint(new LatLon(loc.getLatitude(), loc.getLongitude()),
-								new PointDescription(PointDescription.POINT_TYPE_MY_LOCATION,
-										mapActivity.getString(R.string.shared_string_my_location)));
-					}
-				}
-
-				if (startPoint != null && endPoint != null) {
-					targetPointsHelper.navigateToPoint(startPoint.point, false, -1, startPoint.getPointDescription(mapActivity));
-					targetPointsHelper.setStartPoint(endPoint.point, false, endPoint.getPointDescription(mapActivity));
-					targetPointsHelper.updateRouteAndRefresh(true);
-
-					updateInfo(parentView);
+				if (getTargets().checkPointToNavigateShort()) {
+					mapActivity.getMapActions().openIntermediatePointsDialog();
 				}
 			}
 		});
 	}
 
-	private void updateToSpinner(final View parentView) {
+	private void updateToSpinner(final InterceptorLinearLayout parentView) {
 		final Spinner toSpinner = setupToSpinner(parentView);
 		toSpinner.setClickable(false);
 		final View toLayout = parentView.findViewById(R.id.ToLayout);
@@ -589,6 +577,49 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 			}
 		});
 
+		final LinearLayout toButton = (LinearLayout) parentView.findViewById(R.id.to_button);
+		ImageView toButtonImageView = (ImageView) parentView.findViewById(R.id.to_button_image_view);
+
+		toButtonImageView.setImageDrawable(mapActivity.getMyApplication().getUIUtilities().getIcon(R.drawable.ic_action_plus,
+				isLight() ? R.color.route_info_control_icon_color_light : R.color.route_info_control_icon_color_dark));
+		toButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				if (mapActivity != null) {
+					final ListPopupWindow popup = new ListPopupWindow(mapActivity);
+					popup.setAnchorView(toLayout);
+					popup.setDropDownGravity(Gravity.END | Gravity.TOP);
+					popup.setModal(true);
+					popup.setAdapter(getIntermediatesPopupAdapter(mapActivity));
+					popup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+						@Override
+						public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+							boolean hideDashboard = false;
+							if (id == MapRouteInfoMenu.SPINNER_FAV_ID) {
+								selectFavorite(null, false, true);
+							} else if (id == MapRouteInfoMenu.SPINNER_MAP_ID) {
+								hideDashboard = true;
+								selectOnScreen(false, true);
+							} else if (id == MapRouteInfoMenu.SPINNER_ADDRESS_ID) {
+								mapActivity.showQuickSearch(MapActivity.ShowQuickSearchMode.INTERMEDIATE_SELECTION, false);
+							} else if (id == MapRouteInfoMenu.SPINNER_MAP_MARKER_MORE_ID) {
+								selectMapMarker(-1, false, true);
+							} else if (id == MapRouteInfoMenu.SPINNER_MAP_MARKER_1_ID) {
+								selectMapMarker(0, false, true);
+							} else if (id == MapRouteInfoMenu.SPINNER_MAP_MARKER_2_ID) {
+								selectMapMarker(1, false, true);
+							}
+							popup.dismiss();
+							if (hideDashboard) {
+								mapActivity.getDashboard().hideDashboard();
+							}
+						}
+					});
+					popup.show();
+				}
+			}
+		});
+
 		updateToIcon(parentView);
 	}
 
@@ -597,7 +628,7 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 		toIcon.setImageDrawable(getIconOrig(R.drawable.list_destination));
 	}
 
-	private void updateFromSpinner(final View parentView) {
+	private void updateFromSpinner(final InterceptorLinearLayout parentView) {
 		final TargetPointsHelper targets = getTargets();
 		final Spinner fromSpinner = setupFromSpinner(parentView);
 		fromSpinner.setClickable(false);
@@ -653,6 +684,41 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 			@Override
 			public void onClick(View v) {
 				fromSpinner.performClick();
+			}
+		});
+
+		LinearLayout swapDirectionButton = (LinearLayout) parentView.findViewById(R.id.from_button);
+		ImageView swapDirectionView = (ImageView) parentView.findViewById(R.id.from_button_image_view);
+		if (generateViaDescription().length() == 0) {
+			swapDirectionButton.setVisibility(View.VISIBLE);
+		} else {
+			swapDirectionButton.setVisibility(View.GONE);
+		}
+		swapDirectionView.setImageDrawable(mapActivity.getMyApplication().getUIUtilities().getIcon(R.drawable.ic_action_change_navigation_points,
+				isLight() ? R.color.route_info_control_icon_color_light : R.color.route_info_control_icon_color_dark));
+		swapDirectionButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				TargetPointsHelper targetPointsHelper = getTargets();
+				TargetPoint startPoint = targetPointsHelper.getPointToStart();
+				TargetPoint endPoint = targetPointsHelper.getPointToNavigate();
+
+				if (startPoint == null) {
+					Location loc = mapActivity.getMyApplication().getLocationProvider().getLastKnownLocation();
+					if (loc != null) {
+						startPoint = TargetPoint.createStartPoint(new LatLon(loc.getLatitude(), loc.getLongitude()),
+								new PointDescription(PointDescription.POINT_TYPE_MY_LOCATION,
+										mapActivity.getString(R.string.shared_string_my_location)));
+					}
+				}
+
+				if (startPoint != null && endPoint != null) {
+					targetPointsHelper.navigateToPoint(startPoint.point, false, -1, startPoint.getPointDescription(mapActivity));
+					targetPointsHelper.setStartPoint(endPoint.point, false, endPoint.getPointDescription(mapActivity));
+					targetPointsHelper.updateRouteAndRefresh(true);
+
+					updateInfo(mainView);
+				}
 			}
 		});
 

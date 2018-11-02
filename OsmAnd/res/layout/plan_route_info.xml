@@ -184,7 +184,7 @@
 		                        android:layout_marginLeft="@dimen/list_item_button_padding"
 		                        android:layout_marginRight="@dimen/list_item_button_padding"
 		                        android:layout_marginTop="@dimen/list_item_button_padding"
-		                        android:src="@drawable/ic_action_test_light" />
+		                        tools:src="@drawable/ic_action_test_light" />
 
                         </LinearLayout>
 
@@ -257,7 +257,7 @@
 		                        android:gravity="end"
 		                        android:layout_marginLeft="@dimen/content_padding_small"
 		                        android:layout_marginRight="@dimen/content_padding_small"
-		                        android:visibility="gone">
+		                        android:visibility="visible">
 
 		                        <TextView
 			                        android:id="@+id/via_button_description"
@@ -268,7 +268,7 @@
 			                        android:layout_marginRight="@dimen/content_padding_small"
 			                        android:layout_weight="1"
 			                        android:ellipsize="end"
-			                        android:text="@string/shared_string_change"
+			                        android:text="@string/shared_string_edit"
 			                        android:textSize="@dimen/default_sub_text_size"
 			                        android:textStyle="bold" />
 
@@ -280,7 +280,7 @@
 			                        android:layout_marginLeft="@dimen/list_item_button_padding"
 			                        android:layout_marginRight="@dimen/list_item_button_padding"
 			                        android:layout_marginTop="@dimen/list_item_button_padding"
-			                        android:src="@drawable/ic_action_test_light" />
+			                        tools:src="@drawable/ic_action_edit_dark" />
 
 	                        </LinearLayout>
 
@@ -351,7 +351,7 @@
 		                        android:gravity="end"
 		                        android:layout_marginLeft="@dimen/content_padding_small"
 		                        android:layout_marginRight="@dimen/content_padding_small"
-		                        android:visibility="gone">
+		                        android:visibility="visible">
 
 		                        <TextView
 			                        android:id="@+id/to_button_description"
@@ -362,7 +362,7 @@
 			                        android:layout_marginRight="@dimen/content_padding_small"
 			                        android:layout_weight="1"
 			                        android:ellipsize="end"
-			                        android:text="@string/shared_string_change"
+			                        android:text="@string/shared_string_add"
 			                        android:textSize="@dimen/default_sub_text_size"
 			                        android:textStyle="bold" />
 
@@ -374,7 +374,7 @@
 			                        android:layout_marginLeft="@dimen/list_item_button_padding"
 			                        android:layout_marginRight="@dimen/list_item_button_padding"
 			                        android:layout_marginTop="@dimen/list_item_button_padding"
-			                        android:src="@drawable/ic_action_test_light" />
+			                        tools:src="@drawable/ic_action_plus" />
 
 	                        </LinearLayout>
 
