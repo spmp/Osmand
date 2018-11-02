@@ -410,6 +410,7 @@
 	<color name="route_info_checked_mode_icon_color_light">#ff8800</color>
 	<color name="route_info_checked_mode_icon_color_dark">#d28521</color>
 	<color name="route_info_unchecked_mode_icon_color">#727272</color>
+	<color name="route_info_active_light">#237bff</color>
 
 	<color name="multi_selection_menu_divider_light">#f0f0f0</color>
 	<color name="multi_selection_menu_divider_dark">#222526</color>

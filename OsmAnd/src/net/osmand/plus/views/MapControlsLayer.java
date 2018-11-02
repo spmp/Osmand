@@ -16,7 +16,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorCompat;
 import android.support.v4.view.ViewPropertyAnimatorListener;
@@ -30,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
 import net.osmand.AndroidUtils;
 import net.osmand.Location;
 import net.osmand.core.android.MapRendererContext;
@@ -293,27 +293,28 @@ public class MapControlsLayer extends OsmandMapLayer {
 
 	public void updateRouteButtons(View main, boolean routeInfo) {
 		boolean nightMode = mapActivity.getMyApplication().getDaynightHelper().isNightModeForMapControls();
-		ImageView cancelRouteButton = (ImageView) main.findViewById(R.id.map_cancel_route_button);
-		cancelRouteButton.setImageDrawable(app.getUIUtilities().getIcon(R.drawable.map_action_cancel, nightMode ? R.color.route_info_control_icon_color_dark : R.color.route_info_control_icon_color_light));
-		cancelRouteButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				clickRouteCancel();
-			}
-		});
+//		ImageView cancelRouteButton = (ImageView) main.findViewById(R.id.map_cancel_route_button);
+//		cancelRouteButton.setImageDrawable(app.getUIUtilities().getIcon(R.drawable.map_action_cancel, nightMode ? R.color.route_info_control_icon_color_dark : R.color.route_info_control_icon_color_light));
+//		cancelRouteButton.setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				clickRouteCancel();
+//			}
+//		});
+//
+//		ImageView waypointsButton = (ImageView) main.findViewById(R.id.map_waypoints_route_button);
+//		waypointsButton.setImageDrawable(app.getUIUtilities().getIcon(R.drawable.ic_action_intermediate_destination, nightMode ? R.color.route_info_control_icon_color_dark : R.color.route_info_control_icon_color_light));
+//		waypointsButton.setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				clickRouteWaypoints();
+//			}
+//		});
 
-		ImageView waypointsButton = (ImageView) main.findViewById(R.id.map_waypoints_route_button);
-		waypointsButton.setImageDrawable(app.getUIUtilities().getIcon(R.drawable.ic_action_intermediate_destination, nightMode ? R.color.route_info_control_icon_color_dark : R.color.route_info_control_icon_color_light));
-		waypointsButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				clickRouteWaypoints();
-			}
-		});
-
-		ImageView options = (ImageView) main.findViewById(R.id.map_options_route_button);
-		options.setImageDrawable(!routeInfo ? app.getUIUtilities().getIcon(R.drawable.map_action_settings,
-				R.color.osmand_orange) : app.getUIUtilities().getIcon(R.drawable.map_action_settings, nightMode ? R.color.route_info_control_icon_color_dark : R.color.route_info_control_icon_color_light));
+		TextView options = (TextView) main.findViewById(R.id.map_options_route_button);
+		Drawable drawable = !routeInfo ? app.getUIUtilities().getIcon(R.drawable.map_action_settings, R.color.osmand_orange)
+				: app.getUIUtilities().getIcon(R.drawable.map_action_settings, nightMode ? R.color.route_info_control_icon_color_dark : R.color.route_info_control_icon_color_light);
+		options.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
 		options.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -321,17 +322,34 @@ public class MapControlsLayer extends OsmandMapLayer {
 			}
 		});
 
-		TextView routeGoButton = (TextView) main.findViewById(R.id.map_go_route_button);
-		routeGoButton.setCompoundDrawablesWithIntrinsicBounds(app.getUIUtilities().getIcon(R.drawable.map_start_navigation, R.color.color_white), null, null, null);
-		routeGoButton.setText(mapActivity.getString(R.string.shared_string_go));
-		routeGoButton.setTextColor(ContextCompat.getColor(mapActivity, R.color.color_white));
-		AndroidUtils.setBackground(mapActivity, routeGoButton, nightMode, R.drawable.route_info_go_btn_bg_light, R.drawable.route_info_go_btn_bg_dark);
-		routeGoButton.setOnClickListener(new View.OnClickListener() {
+		final TextView soundOption = (TextView) main.findViewById(R.id.sound_setting_button);
+		String text = app.getString(R.string.sound_is, (app.getText(app.getRoutingHelper().getVoiceRouter().isMute() ? R.string.shared_string_off : R.string.shared_string_on)));
+		soundOption.setText(text);
+		Drawable sound = !routeInfo ? app.getUIUtilities().getIcon(R.drawable.ic_action_volume_up, R.color.osmand_orange)
+				: app.getUIUtilities().getIcon(R.drawable.ic_action_volume_up, nightMode ? R.color.route_info_control_icon_color_dark : R.color.route_info_control_icon_color_light);
+		soundOption.setCompoundDrawablesWithIntrinsicBounds(sound, null, null, null);
+		soundOption.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				clickRouteGo();
+				boolean mt = !app.getRoutingHelper().getVoiceRouter().isMute();
+				settings.VOICE_MUTE.set(mt);
+				app.getRoutingHelper().getVoiceRouter().setMute(mt);
+				String text = app.getString(R.string.sound_is, (app.getText(app.getRoutingHelper().getVoiceRouter().isMute() ? R.string.shared_string_off : R.string.shared_string_on)));
+				soundOption.setText(text);
 			}
 		});
+
+//		TextView routeGoButton = (TextView) main.findViewById(R.id.map_go_route_button);
+//		routeGoButton.setCompoundDrawablesWithIntrinsicBounds(app.getUIUtilities().getIcon(R.drawable.map_start_navigation, R.color.color_white), null, null, null);
+//		routeGoButton.setText(mapActivity.getString(R.string.shared_string_go));
+//		routeGoButton.setTextColor(ContextCompat.getColor(mapActivity, R.color.color_white));
+//		AndroidUtils.setBackground(mapActivity, routeGoButton, nightMode, R.drawable.route_info_go_btn_bg_light, R.drawable.route_info_go_btn_bg_dark);
+//		routeGoButton.setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				clickRouteGo();
+//			}
+//		});
 	}
 
 	public void setControlsClickable(boolean clickable) {

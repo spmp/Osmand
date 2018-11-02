@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="@dimen/route_info_modes_height"
+	android:layout_height="@dimen/route_info_modes_height"
+	android:background="?attr/selectableItemBackground">
+
+	<ImageView
+		android:id="@+id/app_mode_icon"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:paddingBottom="@dimen/route_info_icon_padding_bottom"
+		android:paddingLeft="@dimen/route_info_icon_padding_left"
+		android:paddingRight="@dimen/route_info_icon_padding_left"
+		android:paddingTop="@dimen/route_info_icon_padding_top"
+		android:scaleType="center"
+		tools:background="@drawable/btn_border_transparent"
+		tools:src="@drawable/ic_dashboard_dark" />
+
+</FrameLayout>
