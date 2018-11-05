@@ -82,6 +82,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -89,6 +90,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static net.osmand.plus.OsmAndCustomizationConstants.DRAWER_ITEM_ID_SCHEME;
 
 
 public class OsmandAidlApi {
@@ -1517,6 +1520,7 @@ public class OsmandAidlApi {
 					}
 					final Intent finalIntent = intent;
 					adapter.addItem(new ContextMenuItem.ItemBuilder()
+							.setId(item.getId())
 							.setTitle(item.name)
 							.setIcon(getIconId(item.iconName))
 							.setListener(new ContextMenuAdapter.ItemClickListener() {
@@ -1655,6 +1659,30 @@ public class OsmandAidlApi {
 		}
 	}
 
+	boolean setNavDrawerLogo(@Nullable String uri) {
+		return app.getAppCustomization().setNavDrawerLogo(uri);
+	}
+
+	boolean setEnabledIds(Collection<String> ids) {
+		app.getAppCustomization().setEnabledIds(ids);
+		return true;
+	}
+
+	boolean setDisabledIds(Collection<String> ids) {
+		app.getAppCustomization().setDisabledIds(ids);
+		return true;
+	}
+
+	boolean setEnabledPatterns(Collection<String> patterns) {
+		app.getAppCustomization().setEnabledPatterns(patterns);
+		return true;
+	}
+
+	boolean setDisabledPatterns(Collection<String> patterns) {
+		app.getAppCustomization().setDisabledPatterns(patterns);
+		return true;
+	}
+
 	public static class ConnectedApp implements Comparable<ConnectedApp> {
 
 		static final String PACK_KEY = "pack";
@@ -1708,6 +1736,10 @@ public class OsmandAidlApi {
 			this.uri = uri;
 			this.iconName = iconName;
 			this.flags = flags;
+		}
+
+		public String getId() {
+			return DRAWER_ITEM_ID_SCHEME + name;
 		}
 	}
 
