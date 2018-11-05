@@ -318,13 +318,13 @@ public class MapControlsLayer extends OsmandMapLayer {
 			}
 		});
 
-		final TextView soundOption = (TextView) main.findViewById(R.id.sound_setting_button);
+		final TextView soundOption = (TextView) main.findViewById(R.id.sound_setting_button_descr);
 		String text = app.getString(R.string.sound_is, (app.getText(app.getRoutingHelper().getVoiceRouter().isMute() ? R.string.shared_string_off : R.string.shared_string_on)));
 		soundOption.setText(text);
 		Drawable sound = !routeInfo ? app.getUIUtilities().getIcon(R.drawable.ic_action_volume_up, R.color.osmand_orange)
 				: app.getUIUtilities().getIcon(R.drawable.ic_action_volume_up, nightMode ? R.color.route_info_control_icon_color_dark : R.color.route_info_control_icon_color_light);
 		soundOption.setCompoundDrawablesWithIntrinsicBounds(sound, null, null, null);
-		soundOption.setOnClickListener(new View.OnClickListener() {
+		main.findViewById(R.id.sound_setting_button).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				boolean mt = !app.getRoutingHelper().getVoiceRouter().isMute();

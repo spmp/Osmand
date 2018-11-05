@@ -28,7 +28,7 @@
         android:layout_marginTop="@dimen/route_info_buttons_padding_top_bottom"
         android:layout_marginBottom="@dimen/route_info_buttons_padding_top_bottom"
         android:layout_gravity="center"
-        tools:background="@color/route_info_divider_dark"/>
+        tools:background="@color/dialog_divider_dark"/>
 
     <ImageButton
         android:id="@+id/map_waypoints_route_button"
@@ -50,7 +50,7 @@
         android:layout_marginTop="@dimen/route_info_buttons_padding_top_bottom"
         android:layout_marginBottom="@dimen/route_info_buttons_padding_top_bottom"
         android:layout_gravity="center"
-        tools:background="@color/route_info_divider_dark"/>
+        tools:background="@color/dialog_divider_dark"/>
 
     <ImageButton
         android:id="@+id/map_options_route_button"

@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -58,6 +60,7 @@ import net.osmand.plus.views.OsmandMapTileView;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -343,6 +346,17 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 		b.show();
 	}
 
+	private void updateApplicationMode(ApplicationMode mode, ApplicationMode next) {
+		OsmandPreference<ApplicationMode> appMode
+				= mapActivity.getMyApplication().getSettings().APPLICATION_MODE;
+		if (routingHelper.isFollowingMode() && appMode.get() == mode) {
+			appMode.set(next);
+			//updateMenu();
+		}
+		routingHelper.setAppMode(next);
+		mapActivity.getMyApplication().initVoiceCommandPlayer(mapActivity, next, true, null, false, false);
+		routingHelper.recalculateRouteDueToSettingsChange();
+	}
 
 	private void updateApplicationModes(final View parentView) {
 		//final OsmandSettings settings = mapActivity.getMyApplication().getSettings();
@@ -357,15 +371,7 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 			public void onClick(View v) {
 				if (selected.size() > 0) {
 					ApplicationMode next = selected.iterator().next();
-					OsmandPreference<ApplicationMode> appMode
-							= mapActivity.getMyApplication().getSettings().APPLICATION_MODE;
-					if (routingHelper.isFollowingMode() && appMode.get() == am) {
-						appMode.set(next);
-						//updateMenu();
-					}
-					routingHelper.setAppMode(next);
-					mapActivity.getMyApplication().initVoiceCommandPlayer(mapActivity, next, true, null, false, false);
-					routingHelper.recalculateRouteDueToSettingsChange();
+					updateApplicationMode(am, next);
 				}
 			}
 		};
@@ -373,12 +379,26 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 		final List<ApplicationMode> values = new ArrayList<ApplicationMode>(ApplicationMode.values(settings));
 		values.remove(ApplicationMode.DEFAULT);
 
+		if (values.size() > 0 && !values.contains(am)) {
+			ApplicationMode next = values.iterator().next();
+			updateApplicationMode(am, next);
+		}
+
 		View ll = mapActivity.getLayoutInflater().inflate(R.layout.mode_toggles, vg);
 		ll.setBackgroundColor(ContextCompat.getColor(mapActivity, nightMode ? R.color.route_info_bg_dark : R.color.route_info_bg_light));
 		final View[] buttons = new View[values.size()];
 		int k = 0;
-		for (ApplicationMode ma : values) {
-			buttons[k++] = createToggle(mapActivity.getLayoutInflater(), (OsmandApplication) mapActivity.getApplication(), (LinearLayout) ll.findViewById(R.id.app_modes_content), ma, true);
+		Iterator<ApplicationMode> iterator = values.iterator();
+		while (iterator.hasNext()) {
+			ApplicationMode mode = iterator.next();
+			View toggle = createToggle(mapActivity.getLayoutInflater(), (OsmandApplication) mapActivity.getApplication(), (LinearLayout) ll.findViewById(R.id.app_modes_content), mode, true);
+
+			if (!iterator.hasNext() && toggle.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+				ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) toggle.getLayoutParams();
+				p.setMargins(p.leftMargin, p.topMargin, p.rightMargin + mapActivity.getResources().getDimensionPixelSize(R.dimen.content_padding), p.bottomMargin);
+			}
+
+			buttons[k++] = toggle;
 		}
 		for (int i = 0; i < buttons.length; i++) {
 			updateButtonState((OsmandApplication) mapActivity.getApplication(), values, selected, listener, buttons, i, true, true);
@@ -394,9 +414,14 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 			final boolean checked = selected.contains(mode);
 			ImageView iv = (ImageView) tb.findViewById(R.id.app_mode_icon);
 			if (checked) {
-				iv.setImageDrawable(ctx.getUIUtilities().getIcon(mode.getSmallIconDark(), nightMode ? R.color.route_info_checked_mode_icon_color_dark : R.color.route_info_active_light));
+				Drawable normal = ctx.getUIUtilities().getIcon(mode.getSmallIconDark(), nightMode ? R.color.route_info_checked_mode_icon_color_dark : R.color.route_info_active_light);
+				if (Build.VERSION.SDK_INT >= 21) {
+					Drawable active = ctx.getUIUtilities().getIcon(mode.getSmallIconDark(), R.color.route_info_unchecked_mode_icon_color);
+					normal = AndroidUtils.createPressedStateListDrawable(normal, active);
+				}
+				iv.setImageDrawable(normal);
 				iv.setContentDescription(String.format("%s %s", mode.toHumanString(ctx), ctx.getString(R.string.item_checked)));
-				iv.setBackgroundResource(R.drawable.btn_border_transparent);
+				iv.setBackgroundResource(nightMode ? R.drawable.btn_border_trans_dark : R.drawable.btn_border_trans_light);
 				tb.setBackgroundDrawable(null);
 			} else {
 				if (useMapTheme) {
@@ -444,6 +469,7 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 		ImageView iv = (ImageView) tb.findViewById(R.id.app_mode_icon);
 		iv.setImageDrawable(ctx.getUIUtilities().getIcon(mode.getSmallIconDark(), nightMode ? R.color.route_info_checked_mode_icon_color_dark : R.color.route_info_active_light));
 		iv.setContentDescription(mode.toHumanString(ctx));
+		iv.setBackgroundResource(nightMode ? R.drawable.btn_border_trans_dark : R.drawable.btn_border_trans_light);
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(metricsX, metricsY);
 		layout.addView(tb, lp);
 		return tb;
@@ -453,14 +479,10 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 		String via = generateViaDescription();
 		View viaLayout = parentView.findViewById(R.id.ViaLayout);
 		View viaLayoutDivider = parentView.findViewById(R.id.viaLayoutDivider);
-		LinearLayout swapDirectionButton = (LinearLayout) parentView.findViewById(R.id.from_button);
-		ImageView swapDirectionView = (ImageView) parentView.findViewById(R.id.from_button_image_view);
 		if (via.length() == 0) {
 			viaLayout.setVisibility(View.GONE);
 			viaLayoutDivider.setVisibility(View.GONE);
-			swapDirectionButton.setVisibility(View.VISIBLE);
 		} else {
-			swapDirectionButton.setVisibility(View.GONE);
 			viaLayout.setVisibility(View.VISIBLE);
 			viaLayoutDivider.setVisibility(View.VISIBLE);
 			((TextView) parentView.findViewById(R.id.ViaView)).setText(via);
@@ -478,7 +500,7 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 		ImageView viaIcon = (ImageView) parentView.findViewById(R.id.viaIcon);
 		viaIcon.setImageDrawable(getIconOrig(R.drawable.list_intermediate));
 
-		LinearLayout viaButton = (LinearLayout) parentView.findViewById(R.id.via_button);
+		FrameLayout viaButton = (FrameLayout) parentView.findViewById(R.id.via_button_container);
 		ImageView viaButtonImageView = (ImageView) parentView.findViewById(R.id.via_button_image_view);
 
 		viaButtonImageView.setImageDrawable(mapActivity.getMyApplication().getUIUtilities().getIcon(R.drawable.ic_action_edit_dark,
@@ -544,7 +566,7 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 			}
 		});
 
-		final LinearLayout toButton = (LinearLayout) parentView.findViewById(R.id.to_button);
+		final FrameLayout toButton = (FrameLayout) parentView.findViewById(R.id.to_button_container);
 		ImageView toButtonImageView = (ImageView) parentView.findViewById(R.id.to_button_image_view);
 
 		toButtonImageView.setImageDrawable(mapActivity.getMyApplication().getUIUtilities().getIcon(R.drawable.ic_action_plus,
@@ -654,13 +676,9 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 			}
 		});
 
-		LinearLayout swapDirectionButton = (LinearLayout) parentView.findViewById(R.id.from_button);
+		FrameLayout swapDirectionButton = (FrameLayout) parentView.findViewById(R.id.from_button_container);
 		ImageView swapDirectionView = (ImageView) parentView.findViewById(R.id.from_button_image_view);
-		if (generateViaDescription().length() == 0) {
-			swapDirectionButton.setVisibility(View.VISIBLE);
-		} else {
-			swapDirectionButton.setVisibility(View.GONE);
-		}
+
 		swapDirectionView.setImageDrawable(mapActivity.getMyApplication().getUIUtilities().getIcon(R.drawable.ic_action_change_navigation_points,
 				isLight() ? R.color.route_info_control_icon_color_light : R.color.route_info_control_icon_color_dark));
 		swapDirectionButton.setOnClickListener(new View.OnClickListener() {

@@ -3,11 +3,13 @@ package net.osmand.plus.mapcontextmenu.other;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.res.ColorStateList;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -356,8 +358,7 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 
 	private int addStatusBarHeightIfNeeded(int res) {
 		if (Build.VERSION.SDK_INT >= 21) {
-			// One pixel is needed to fill a thin gap between the status bar and the fragment.
-			return res + AndroidUtils.getStatusBarHeight(getActivity()) - 1;
+			return res + AndroidUtils.getStatusBarHeight(getMyApplication());
 		}
 		return res;
 	}
@@ -748,7 +749,29 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 				R.color.route_info_divider_light, R.color.route_info_divider_dark);
 		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.dividerButtons), nightMode,
 				R.color.route_info_divider_light, R.color.route_info_divider_dark);
+		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.app_modes_options_container), nightMode,
+				R.drawable.route_info_trans_gradient_light, R.drawable.route_info_trans_gradient_dark);
+		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.from_button), nightMode,
+				R.drawable.btn_border_trans_rounded_light, R.drawable.btn_border_trans_rounded_dark);
+		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.via_button), nightMode,
+				R.drawable.btn_border_trans_rounded_light, R.drawable.btn_border_trans_rounded_dark);
+		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.to_button), nightMode,
+				R.drawable.btn_border_trans_rounded_light, R.drawable.btn_border_trans_rounded_dark);
+		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.sound_setting_button_descr), nightMode,
+				R.drawable.btn_border_trans_light, R.drawable.btn_border_trans_dark);
 
+
+		ColorStateList selectedLangColorStateList = AndroidUtils.createPressedColorStateList(
+				getContext(), nightMode,
+				R.color.active_buttons_and_links_light, R.color.description_font_and_bottom_sheet_icons,
+				R.color.active_buttons_and_links_dark, R.color.description_font_and_bottom_sheet_icons
+		);
+
+		((TextView) mainView.findViewById(R.id.from_button_description)).setTextColor(selectedLangColorStateList);
+		((TextView) mainView.findViewById(R.id.via_button_description)).setTextColor(selectedLangColorStateList);
+		((TextView) mainView.findViewById(R.id.to_button_description)).setTextColor(selectedLangColorStateList);
+		((TextView) mainView.findViewById(R.id.sound_setting_button_descr)).setTextColor(selectedLangColorStateList);
+		((TextView) mainView.findViewById(R.id.map_options_route_button)).setTextColor(ContextCompat.getColor(getMyApplication(), nightMode ? R.color.active_buttons_and_links_dark : R.color.active_buttons_and_links_light));
 
 		AndroidUtils.setTextPrimaryColor(ctx, (TextView) mainView.findViewById(R.id.ViaView), nightMode);
 		AndroidUtils.setTextSecondaryColor(ctx, (TextView) mainView.findViewById(R.id.ViaSubView), nightMode);

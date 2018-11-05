@@ -3,7 +3,7 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="@dimen/route_info_modes_height"
 	android:layout_height="@dimen/route_info_modes_height"
-	android:background="?attr/selectableItemBackground">
+	style="@style/SelectableItemBackground">
 
 	<ImageView
 		android:id="@+id/app_mode_icon"
@@ -15,7 +15,7 @@
 		android:paddingRight="@dimen/route_info_icon_padding_left"
 		android:paddingTop="@dimen/route_info_icon_padding_top"
 		android:scaleType="center"
-		tools:background="@drawable/btn_border_transparent"
+		tools:background="@drawable/btn_border_trans_light"
 		tools:src="@drawable/ic_dashboard_dark" />
 
 </FrameLayout>
