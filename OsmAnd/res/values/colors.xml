@@ -454,4 +454,21 @@
 	<color name="wiki_webview_background_light">#ffffff</color>
 	<color name="wiki_webview_background_dark">#17191a</color>
 
+	<!-- Basic colors -->
+	<color name="app_bar_main_dark">#17191a</color>
+	<color name="app_bar_main_light">#ff8800</color>
+	<color name="activity_background_dark">#17191a</color>
+	<color name="activity_background_light">#f0f0f0</color>
+	<color name="card_and_list_background_dark">#222526</color>
+	<color name="card_and_list_background_light">#ffffff</color>
+	<color name="divider_dark">#2d3133</color>
+	<color name="divider_light">#f0f0f0</color>
+	<color name="main_font_dark">#cccccc</color>
+	<color name="main_font_light">#212121</color>
+	<color name="description_font_and_bottom_sheet_icons">#727272</color>
+	<color name="additional_description_dark">#4d4d4d</color>
+	<color name="additional_description_light">#b3b3b3</color>
+	<color name="active_buttons_and_links_light">#237bff</color>
+	<color name="active_buttons_and_links_dark">#d28521</color>
+
 </resources>
