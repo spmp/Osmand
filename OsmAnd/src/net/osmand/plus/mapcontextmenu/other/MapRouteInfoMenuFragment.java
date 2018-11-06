@@ -679,6 +679,7 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 		if (menu != null) {
 			menu.updateInfo(mainView);
 			applyDayNightMode();
+			runLayoutListener();
 		}
 	}
 
