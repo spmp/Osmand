@@ -769,7 +769,8 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 				R.drawable.btn_border_trans_rounded_light, R.drawable.btn_border_trans_rounded_dark);
 		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.sound_setting_button_descr), nightMode,
 				R.drawable.btn_border_trans_light, R.drawable.btn_border_trans_dark);
-
+		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.dividerToDropDown), nightMode,
+				R.color.route_info_divider_light, R.color.route_info_divider_dark);
 
 		ColorStateList selectedLangColorStateList = AndroidUtils.createPressedColorStateList(
 				getContext(), nightMode,

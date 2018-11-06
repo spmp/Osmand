@@ -37,6 +37,7 @@ import net.osmand.data.RotatedTileBox;
 import net.osmand.plus.ApplicationMode;
 import net.osmand.plus.GeocodingLookupService;
 import net.osmand.plus.GeocodingLookupService.AddressLookupRequest;
+import net.osmand.plus.OsmAndFormatter;
 import net.osmand.plus.OsmandSettings;
 import net.osmand.plus.UiUtilities;
 import net.osmand.plus.MapMarkersHelper;
@@ -47,12 +48,14 @@ import net.osmand.plus.R;
 import net.osmand.plus.TargetPointsHelper;
 import net.osmand.plus.TargetPointsHelper.TargetPoint;
 import net.osmand.plus.activities.MapActivity;
+import net.osmand.plus.activities.ShowRouteInfoDialogFragment;
 import net.osmand.plus.activities.actions.AppModeDialog;
 import net.osmand.plus.helpers.AndroidUiHelper;
 import net.osmand.plus.helpers.MapMarkerDialogHelper;
 import net.osmand.plus.mapcontextmenu.InterceptorLinearLayout;
 import net.osmand.plus.mapcontextmenu.MapContextMenu;
 import net.osmand.plus.mapmarkers.MapMarkerSelectionFragment;
+import net.osmand.plus.routing.RouteDirectionInfo;
 import net.osmand.plus.routing.RoutingHelper;
 import net.osmand.plus.routing.RoutingHelper.IRouteInformationListener;
 import net.osmand.plus.views.MapControlsLayer;
@@ -303,6 +306,12 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 		updateApplicationModesOptions(main);
 
 		mapControlsLayer.updateRouteButtons(main, true);
+		boolean addButtons = routingHelper.isRouteCalculated();
+		if (addButtons) {
+			updateRouteButtons(main);
+		} else {
+			updateRouteCalcProgress(main);
+		}
 	}
 
 	private void updateApplicationModesOptions(final View parentView) {
@@ -403,6 +412,121 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 		}
 		for (int i = 0; i < buttons.length; i++) {
 			updateButtonState((OsmandApplication) mapActivity.getApplication(), values, selected, listener, buttons, i, true, true);
+		}
+	}
+
+	private void updateRouteCalcProgress(final View main) {
+		TargetPointsHelper targets = getTargets();
+		if (targets.hasTooLongDistanceToNavigate()) {
+			main.findViewById(R.id.dividerToDropDown).setVisibility(View.VISIBLE);
+			main.findViewById(R.id.RouteInfoControls).setVisibility(View.VISIBLE);
+			TextView textView = (TextView) main.findViewById(R.id.InfoTextView);
+			ImageView iconView = (ImageView) main.findViewById(R.id.InfoIcon);
+			main.findViewById(R.id.Prev).setVisibility(View.GONE);
+			main.findViewById(R.id.Next).setVisibility(View.GONE);
+			main.findViewById(R.id.InfoIcon).setVisibility(View.GONE);
+			main.findViewById(R.id.DurationIcon).setVisibility(View.GONE);
+			main.findViewById(R.id.InfoDistance).setVisibility(View.GONE);
+			main.findViewById(R.id.InfoDuration).setVisibility(View.GONE);
+			textView.setText(R.string.route_is_too_long_v2);
+			textView.setVisibility(View.VISIBLE);
+			iconView.setImageDrawable(mapActivity.getMyApplication().getUIUtilities().getIcon(R.drawable.ic_warning, isLight()));
+		} else {
+			main.findViewById(R.id.dividerToDropDown).setVisibility(View.GONE);
+			main.findViewById(R.id.RouteInfoControls).setVisibility(View.GONE);
+		}
+	}
+
+	private void updateRouteButtons(final InterceptorLinearLayout mainView) {
+		mainView.findViewById(R.id.dividerToDropDown).setVisibility(View.VISIBLE);
+		mainView.findViewById(R.id.RouteInfoControls).setVisibility(View.VISIBLE);
+		final OsmandApplication ctx = mapActivity.getMyApplication();
+		ImageView prev = (ImageView) mainView.findViewById(R.id.Prev);
+		prev.setImageDrawable(ctx.getUIUtilities().getIcon(R.drawable.ic_prev, isLight()));
+		if (directionInfo >= 0) {
+			prev.setVisibility(View.VISIBLE);
+			prev.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					if (directionInfo >= 0) {
+						directionInfo--;
+					}
+					if (routingHelper.getRouteDirections() != null && directionInfo >= 0) {
+						if (routingHelper.getRouteDirections().size() > directionInfo) {
+							RouteDirectionInfo info = routingHelper.getRouteDirections().get(directionInfo);
+							net.osmand.Location l = routingHelper.getLocationFromRouteDirection(info);
+							contextMenu.showMinimized(new LatLon(l.getLatitude(), l.getLongitude()), null, info);
+							showLocationOnMap(mapActivity, l.getLatitude(), l.getLongitude());
+						}
+					}
+					mapView.refreshMap();
+					updateInfo(mainView);
+				}
+
+			});
+		} else {
+			prev.setVisibility(View.GONE);
+		}
+		ImageView next = (ImageView) mainView.findViewById(R.id.Next);
+		next.setVisibility(View.VISIBLE);
+		next.setImageDrawable(ctx.getUIUtilities().getIcon(R.drawable.ic_next, isLight()));
+		next.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (routingHelper.getRouteDirections() != null && directionInfo < routingHelper.getRouteDirections().size() - 1) {
+					directionInfo++;
+					RouteDirectionInfo info = routingHelper.getRouteDirections().get(directionInfo);
+					net.osmand.Location l = routingHelper.getLocationFromRouteDirection(info);
+					contextMenu.showMinimized(new LatLon(l.getLatitude(), l.getLongitude()), null, info);
+					showLocationOnMap(mapActivity, l.getLatitude(), l.getLongitude());
+				}
+				mapView.refreshMap();
+				updateInfo(mainView);
+			}
+
+		});
+		View info = mainView.findViewById(R.id.Info);
+		info.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				ShowRouteInfoDialogFragment.showDialog(mapActivity.getSupportFragmentManager());
+			}
+		});
+
+		TextView textView = (TextView) mainView.findViewById(R.id.InfoTextView);
+		ImageView infoIcon = (ImageView) mainView.findViewById(R.id.InfoIcon);
+		ImageView durationIcon = (ImageView) mainView.findViewById(R.id.DurationIcon);
+		View infoDistanceView = mainView.findViewById(R.id.InfoDistance);
+		View infoDurationView = mainView.findViewById(R.id.InfoDuration);
+		if (directionInfo >= 0) {
+			infoIcon.setVisibility(View.GONE);
+			durationIcon.setVisibility(View.GONE);
+			infoDistanceView.setVisibility(View.GONE);
+			infoDurationView.setVisibility(View.GONE);
+			textView.setVisibility(View.VISIBLE);
+		} else {
+			infoIcon.setImageDrawable(ctx.getUIUtilities().getIcon(R.drawable.ic_action_route_distance, R.color.route_info_unchecked_mode_icon_color));
+			infoIcon.setVisibility(View.VISIBLE);
+			durationIcon.setImageDrawable(ctx.getUIUtilities().getIcon(R.drawable.ic_action_time_span, R.color.route_info_unchecked_mode_icon_color));
+			durationIcon.setVisibility(View.VISIBLE);
+			infoDistanceView.setVisibility(View.VISIBLE);
+			infoDurationView.setVisibility(View.VISIBLE);
+			textView.setVisibility(View.GONE);
+		}
+		if (directionInfo >= 0 && routingHelper.getRouteDirections() != null
+				&& directionInfo < routingHelper.getRouteDirections().size()) {
+			RouteDirectionInfo ri = routingHelper.getRouteDirections().get(directionInfo);
+			if (!ri.getDescriptionRoutePart().endsWith(OsmAndFormatter.getFormattedDistance(ri.distance, ctx))) {
+				textView.setText((directionInfo + 1) + ". " + ri.getDescriptionRoutePart() + " " + OsmAndFormatter.getFormattedDistance(ri.distance, ctx));
+			} else {
+				textView.setText((directionInfo + 1) + ". " + ri.getDescriptionRoutePart());
+			}
+		} else {
+			TextView distanceText = (TextView) mainView.findViewById(R.id.DistanceText);
+			TextView durationText = (TextView) mainView.findViewById(R.id.DurationText);
+			distanceText.setText(OsmAndFormatter.getFormattedDistance(ctx.getRoutingHelper().getLeftDistance(), ctx));
+			durationText.setText(OsmAndFormatter.getFormattedDuration(ctx.getRoutingHelper().getLeftTime(), ctx));
 		}
 	}
 
