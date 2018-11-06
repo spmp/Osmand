@@ -204,7 +204,9 @@
 								android:id="@+id/dividerFromDropDown"
 								android:layout_width="match_parent"
 								android:layout_height="1dp"
+								android:layout_marginEnd="@dimen/route_info_directions_margin"
 								android:layout_marginLeft="@dimen/route_info_divider_margin"
+								android:layout_marginRight="@dimen/route_info_directions_margin"
 								android:layout_marginStart="@dimen/route_info_divider_margin"
 								android:background="@color/dashboard_divider_dark"
 								android:focusable="false" />
@@ -307,7 +309,9 @@
 								android:id="@+id/viaLayoutDivider"
 								android:layout_width="match_parent"
 								android:layout_height="1dp"
+								android:layout_marginEnd="@dimen/route_info_directions_margin"
 								android:layout_marginLeft="@dimen/route_info_divider_margin"
+								android:layout_marginRight="@dimen/route_info_directions_margin"
 								android:layout_marginStart="@dimen/route_info_divider_margin"
 								android:background="@color/dashboard_divider_dark"
 								android:focusable="false" />
@@ -466,10 +470,11 @@
 					android:drawablePadding="@dimen/content_padding_small"
 					android:ellipsize="end"
 					android:gravity="center"
+					android:letterSpacing="@dimen/text_button_letter_spacing"
 					android:paddingLeft="@dimen/content_padding_small"
 					android:paddingRight="@dimen/content_padding_small"
 					android:text="@string/shared_string_settings"
-					android:textSize="@dimen/default_sub_text_size"
+					android:textSize="@dimen/default_desc_text_size"
 					android:textStyle="bold"
 					tools:drawableEnd="@drawable/map_action_settings"
 					tools:drawableRight="@drawable/map_action_settings" />

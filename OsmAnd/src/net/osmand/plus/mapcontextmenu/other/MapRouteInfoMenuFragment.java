@@ -772,17 +772,13 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.dividerToDropDown), nightMode,
 				R.color.route_info_divider_light, R.color.route_info_divider_dark);
 
-		ColorStateList selectedLangColorStateList = AndroidUtils.createPressedColorStateList(
-				getContext(), nightMode,
-				R.color.active_buttons_and_links_light, R.color.route_info_bg_light,
-				R.color.active_buttons_and_links_dark, R.color.main_font_dark
-		);
+		int color = ContextCompat.getColor(getMapActivity(), nightMode ? R.color.active_buttons_and_links_dark : R.color.active_buttons_and_links_light);
 
-		((TextView) mainView.findViewById(R.id.from_button_description)).setTextColor(selectedLangColorStateList);
-		((TextView) mainView.findViewById(R.id.via_button_description)).setTextColor(selectedLangColorStateList);
-		((TextView) mainView.findViewById(R.id.to_button_description)).setTextColor(selectedLangColorStateList);
-		((TextView) mainView.findViewById(R.id.sound_setting_button_descr)).setTextColor(selectedLangColorStateList);
-		((TextView) mainView.findViewById(R.id.map_options_route_button)).setTextColor(ContextCompat.getColor(getMyApplication(), nightMode ? R.color.active_buttons_and_links_dark : R.color.active_buttons_and_links_light));
+		((TextView) mainView.findViewById(R.id.from_button_description)).setTextColor(color);
+		((TextView) mainView.findViewById(R.id.via_button_description)).setTextColor(color);
+		((TextView) mainView.findViewById(R.id.to_button_description)).setTextColor(color);
+		((TextView) mainView.findViewById(R.id.sound_setting_button_descr)).setTextColor(color);
+		((TextView) mainView.findViewById(R.id.map_options_route_button)).setTextColor(color);
 
 		AndroidUtils.setTextPrimaryColor(ctx, (TextView) mainView.findViewById(R.id.ViaView), nightMode);
 		AndroidUtils.setTextSecondaryColor(ctx, (TextView) mainView.findViewById(R.id.ViaSubView), nightMode);

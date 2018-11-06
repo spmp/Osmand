@@ -310,6 +310,10 @@ public class MapControlsLayer extends OsmandMapLayer {
 		TextView options = (TextView) main.findViewById(R.id.map_options_route_button);
 		Drawable drawable = !routeInfo ? app.getUIUtilities().getIcon(R.drawable.map_action_settings, R.color.osmand_orange)
 				: app.getUIUtilities().getIcon(R.drawable.map_action_settings, nightMode ? R.color.route_info_control_icon_color_dark : R.color.route_info_control_icon_color_light);
+		if (Build.VERSION.SDK_INT >= 21) {
+			Drawable active = app.getUIUtilities().getIcon(R.drawable.map_action_settings, nightMode ? R.color.active_buttons_and_links_dark : R.color.active_buttons_and_links_light);
+			drawable = AndroidUtils.createPressedStateListDrawable(drawable, active);
+		}
 		options.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
 		options.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -323,6 +327,10 @@ public class MapControlsLayer extends OsmandMapLayer {
 		soundOption.setText(text);
 		Drawable sound = !routeInfo ? app.getUIUtilities().getIcon(R.drawable.ic_action_volume_up, R.color.osmand_orange)
 				: app.getUIUtilities().getIcon(R.drawable.ic_action_volume_up, nightMode ? R.color.route_info_control_icon_color_dark : R.color.route_info_control_icon_color_light);
+		if (Build.VERSION.SDK_INT >= 21) {
+			Drawable active = app.getUIUtilities().getIcon(R.drawable.ic_action_volume_up, nightMode ? R.color.active_buttons_and_links_dark : R.color.active_buttons_and_links_light);
+			sound = AndroidUtils.createPressedStateListDrawable(sound, active);
+		}
 		soundOption.setCompoundDrawablesWithIntrinsicBounds(sound, null, null, null);
 		main.findViewById(R.id.sound_setting_button).setOnClickListener(new View.OnClickListener() {
 			@Override

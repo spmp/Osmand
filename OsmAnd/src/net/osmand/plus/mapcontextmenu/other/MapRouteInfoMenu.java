@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -396,6 +397,11 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 
 		View ll = mapActivity.getLayoutInflater().inflate(R.layout.mode_toggles, vg);
 		ll.setBackgroundColor(ContextCompat.getColor(mapActivity, nightMode ? R.color.route_info_bg_dark : R.color.route_info_bg_light));
+
+		HorizontalScrollView scrollView = ll.findViewById(R.id.app_modes_scroll_container);
+		scrollView.setVerticalScrollBarEnabled(false);
+		scrollView.setHorizontalScrollBarEnabled(false);
+
 		final View[] buttons = new View[values.size()];
 		int k = 0;
 		Iterator<ApplicationMode> iterator = values.iterator();
@@ -539,20 +545,19 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 			final boolean checked = selected.contains(mode);
 			ImageView iv = (ImageView) tb.findViewById(R.id.app_mode_icon);
 			if (checked) {
-				Drawable normal = ctx.getUIUtilities().getIcon(mode.getSmallIconDark(), nightMode ? R.color.active_buttons_and_links_dark : R.color.active_buttons_and_links_light);
-				if (Build.VERSION.SDK_INT >= 21) {
-					Drawable active = ctx.getUIUtilities().getIcon(mode.getSmallIconDark(), nightMode ? R.color.route_info_control_icon_color_dark : R.color.route_info_control_icon_color_light);
-					normal = AndroidUtils.createPressedStateListDrawable(normal, active);
-				}
-				iv.setImageDrawable(normal);
+				Drawable drawable = ctx.getUIUtilities().getIcon(mode.getSmallIconDark(), nightMode ? R.color.active_buttons_and_links_dark : R.color.active_buttons_and_links_light);
+				iv.setImageDrawable(drawable);
 				iv.setContentDescription(String.format("%s %s", mode.toHumanString(ctx), ctx.getString(R.string.item_checked)));
 				iv.setBackgroundResource(nightMode ? R.drawable.btn_border_trans_dark : R.drawable.btn_border_trans_light);
-				tb.setBackgroundDrawable(null);
 			} else {
 				if (useMapTheme) {
-					iv.setImageDrawable(ctx.getUIUtilities().getIcon(mode.getSmallIconDark(), R.color.route_info_unchecked_mode_icon_color));
-					iv.setBackgroundDrawable(null);
-					tb.setBackgroundResource(AndroidUtils.resolveAttribute(ctx, android.R.attr.selectableItemBackground));
+					Drawable drawable = ctx.getUIUtilities().getIcon(mode.getSmallIconDark(), nightMode ? R.color.route_info_control_icon_color_dark : R.color.route_info_control_icon_color_light);
+					if (Build.VERSION.SDK_INT >= 21) {
+						Drawable active = ctx.getUIUtilities().getIcon(mode.getSmallIconDark(), nightMode ? R.color.active_buttons_and_links_dark : R.color.active_buttons_and_links_light);
+						drawable = AndroidUtils.createPressedStateListDrawable(drawable, active);
+					}
+					iv.setImageDrawable(drawable);
+					iv.setBackgroundResource(nightMode ? R.drawable.btn_border_pressed_dark : R.drawable.btn_border_pressed_light);
 				} else {
 					iv.setImageDrawable(ctx.getUIUtilities().getThemedIcon(mode.getSmallIconDark()));
 				}
@@ -590,11 +595,11 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 	private View createToggle(LayoutInflater layoutInflater, OsmandApplication ctx, LinearLayout layout, ApplicationMode mode, boolean useMapTheme) {
 		int metricsX = (int) ctx.getResources().getDimension(R.dimen.route_info_modes_height);
 		int metricsY = (int) ctx.getResources().getDimension(R.dimen.route_info_modes_height);
-		View tb = View.inflate(new ContextThemeWrapper(ctx, nightMode ? R.style.SelectableDarkItemBackground : R.style.SelectableLightItemBackground), R.layout.mode_view_route_preparation, null);
+		View tb = layoutInflater.inflate(R.layout.mode_view_route_preparation, null);
 		ImageView iv = (ImageView) tb.findViewById(R.id.app_mode_icon);
 		iv.setImageDrawable(ctx.getUIUtilities().getIcon(mode.getSmallIconDark(), nightMode ? R.color.active_buttons_and_links_dark : R.color.active_buttons_and_links_light));
 		iv.setContentDescription(mode.toHumanString(ctx));
-		iv.setBackgroundResource(nightMode ? R.drawable.btn_border_trans_dark : R.drawable.btn_border_trans_light);
+		iv.setBackgroundResource(nightMode ? R.drawable.btn_border_pressed_dark : R.drawable.btn_border_pressed_light);
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(metricsX, metricsY);
 		layout.addView(tb, lp);
 		return tb;
@@ -628,8 +633,13 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 		FrameLayout viaButton = (FrameLayout) parentView.findViewById(R.id.via_button_container);
 		ImageView viaButtonImageView = (ImageView) parentView.findViewById(R.id.via_button_image_view);
 
-		viaButtonImageView.setImageDrawable(mapActivity.getMyApplication().getUIUtilities().getIcon(R.drawable.ic_action_edit_dark,
-				isLight() ? R.color.route_info_control_icon_color_light : R.color.route_info_control_icon_color_dark));
+		Drawable normal = mapActivity.getMyApplication().getUIUtilities().getIcon(R.drawable.ic_action_edit_dark, nightMode ? R.color.route_info_control_icon_color_dark : R.color.route_info_control_icon_color_light);
+		if (Build.VERSION.SDK_INT >= 21) {
+			Drawable active = mapActivity.getMyApplication().getUIUtilities().getIcon(R.drawable.ic_action_edit_dark, nightMode ? R.color.active_buttons_and_links_dark : R.color.active_buttons_and_links_light);
+
+			normal = AndroidUtils.createPressedStateListDrawable(normal, active);
+		}
+		viaButtonImageView.setImageDrawable(normal);
 		viaButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
@@ -694,8 +704,14 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 		final FrameLayout toButton = (FrameLayout) parentView.findViewById(R.id.to_button_container);
 		ImageView toButtonImageView = (ImageView) parentView.findViewById(R.id.to_button_image_view);
 
-		toButtonImageView.setImageDrawable(mapActivity.getMyApplication().getUIUtilities().getIcon(R.drawable.ic_action_plus,
-				isLight() ? R.color.route_info_control_icon_color_light : R.color.route_info_control_icon_color_dark));
+		Drawable normal = mapActivity.getMyApplication().getUIUtilities().getIcon(R.drawable.ic_action_plus, nightMode ? R.color.route_info_control_icon_color_dark : R.color.route_info_control_icon_color_light);
+		if (Build.VERSION.SDK_INT >= 21) {
+			Drawable active = mapActivity.getMyApplication().getUIUtilities().getIcon(R.drawable.ic_action_plus, nightMode ? R.color.active_buttons_and_links_dark : R.color.active_buttons_and_links_light);
+
+			normal = AndroidUtils.createPressedStateListDrawable(normal, active);
+		}
+
+		toButtonImageView.setImageDrawable(normal);
 		toButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
@@ -804,8 +820,14 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 		FrameLayout swapDirectionButton = (FrameLayout) parentView.findViewById(R.id.from_button_container);
 		ImageView swapDirectionView = (ImageView) parentView.findViewById(R.id.from_button_image_view);
 
-		swapDirectionView.setImageDrawable(mapActivity.getMyApplication().getUIUtilities().getIcon(R.drawable.ic_action_change_navigation_points,
-				isLight() ? R.color.route_info_control_icon_color_light : R.color.route_info_control_icon_color_dark));
+		Drawable normal = mapActivity.getMyApplication().getUIUtilities().getIcon(R.drawable.ic_action_change_navigation_points, nightMode ? R.color.route_info_control_icon_color_dark : R.color.route_info_control_icon_color_light);
+		if (Build.VERSION.SDK_INT >= 21) {
+			Drawable active = mapActivity.getMyApplication().getUIUtilities().getIcon(R.drawable.ic_action_change_navigation_points, nightMode ? R.color.active_buttons_and_links_dark : R.color.active_buttons_and_links_light);
+
+			normal = AndroidUtils.createPressedStateListDrawable(normal, active);
+		}
+
+		swapDirectionView.setImageDrawable(normal);
 		swapDirectionButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {

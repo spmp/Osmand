@@ -469,5 +469,7 @@
 	<color name="additional_description_light">#b3b3b3</color>
 	<color name="active_buttons_and_links_light">#237bff</color>
 	<color name="active_buttons_and_links_dark">#d28521</color>
+	<color name="active_buttons_and_links_trans_light">#66237bff</color>
+	<color name="active_buttons_and_links_trans_dark">#66d28521</color>
 
 </resources>
