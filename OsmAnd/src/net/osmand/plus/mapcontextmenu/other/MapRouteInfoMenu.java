@@ -414,7 +414,7 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 			final boolean checked = selected.contains(mode);
 			ImageView iv = (ImageView) tb.findViewById(R.id.app_mode_icon);
 			if (checked) {
-				Drawable normal = ctx.getUIUtilities().getIcon(mode.getSmallIconDark(), nightMode ? R.color.route_info_checked_mode_icon_color_dark : R.color.route_info_active_light);
+				Drawable normal = ctx.getUIUtilities().getIcon(mode.getSmallIconDark(), nightMode ? R.color.active_buttons_and_links_dark : R.color.active_buttons_and_links_light);
 				if (Build.VERSION.SDK_INT >= 21) {
 					Drawable active = ctx.getUIUtilities().getIcon(mode.getSmallIconDark(), nightMode ? R.color.route_info_control_icon_color_dark : R.color.route_info_control_icon_color_light);
 					normal = AndroidUtils.createPressedStateListDrawable(normal, active);
@@ -467,7 +467,7 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 		int metricsY = (int) ctx.getResources().getDimension(R.dimen.route_info_modes_height);
 		View tb = layoutInflater.inflate(R.layout.mode_view_route_preparation, null);
 		ImageView iv = (ImageView) tb.findViewById(R.id.app_mode_icon);
-		iv.setImageDrawable(ctx.getUIUtilities().getIcon(mode.getSmallIconDark(), nightMode ? R.color.route_info_checked_mode_icon_color_dark : R.color.route_info_active_light));
+		iv.setImageDrawable(ctx.getUIUtilities().getIcon(mode.getSmallIconDark(), nightMode ? R.color.active_buttons_and_links_dark : R.color.active_buttons_and_links_light));
 		iv.setContentDescription(mode.toHumanString(ctx));
 		iv.setBackgroundResource(nightMode ? R.drawable.btn_border_trans_dark : R.drawable.btn_border_trans_light);
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(metricsX, metricsY);
