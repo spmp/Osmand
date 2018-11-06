@@ -9,12 +9,21 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
-    <style name="SelectableItemTheme">
-        <item name="colorControlHighlight">?attr/route_info_selectable_bg</item>
+    <style name="SelectableDarkItemTheme">
+        <item name="colorControlHighlight">@color/active_buttons_and_links_dark</item>
     </style>
 
-    <style name="SelectableItemBackground">
-        <item name="android:theme">@style/SelectableItemTheme</item>
+    <style name="SelectableLightItemTheme">
+        <item name="colorControlHighlight">@color/active_buttons_and_links_light</item>
+    </style>
+
+    <style name="SelectableDarkItemBackground">
+        <item name="android:theme">@style/SelectableDarkItemTheme</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
+
+    <style name="SelectableLightItemBackground">
+        <item name="android:theme">@style/SelectableLightItemTheme</item>
         <item name="android:background">?attr/selectableItemBackground</item>
     </style>
 

@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.ListPopupWindow;
+import android.view.ContextThemeWrapper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -465,7 +466,7 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 	private View createToggle(LayoutInflater layoutInflater, OsmandApplication ctx, LinearLayout layout, ApplicationMode mode, boolean useMapTheme) {
 		int metricsX = (int) ctx.getResources().getDimension(R.dimen.route_info_modes_height);
 		int metricsY = (int) ctx.getResources().getDimension(R.dimen.route_info_modes_height);
-		View tb = layoutInflater.inflate(R.layout.mode_view_route_preparation, null);
+		View tb = View.inflate(new ContextThemeWrapper(ctx, nightMode ? R.style.SelectableDarkItemBackground : R.style.SelectableLightItemBackground), R.layout.mode_view_route_preparation, null);
 		ImageView iv = (ImageView) tb.findViewById(R.id.app_mode_icon);
 		iv.setImageDrawable(ctx.getUIUtilities().getIcon(mode.getSmallIconDark(), nightMode ? R.color.active_buttons_and_links_dark : R.color.active_buttons_and_links_light));
 		iv.setContentDescription(mode.toHumanString(ctx));
