@@ -118,13 +118,14 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 			}
 		});
 
-		LinearLayout bottomView = view.findViewById(R.id.context_menu_bottom_view);
 		LockableScrollView bottomScrollView = (LockableScrollView) view.findViewById(R.id.context_menu_bottom_scroll);
 		bottomScrollView.setScrollingEnabled(false);
 		bottomScrollView.setBackgroundColor(getResources()
 				.getColor(nightMode ? R.color.ctx_menu_bottom_view_bg_dark : R.color.ctx_menu_bottom_view_bg_light));
-		bottomView.setBackgroundColor(getResources()
+		view.findViewById(R.id.context_menu_bottom_view).setBackgroundColor(getResources()
 				.getColor(nightMode ? R.color.ctx_menu_bottom_view_bg_dark : R.color.ctx_menu_bottom_view_bg_light));
+
+		buildBottomView();
 
 		if (!portrait) {
 			final TypedValue typedValueAttr = new TypedValue();
@@ -336,6 +337,14 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 			return nightMode ? R.color.status_bar_dark : R.color.status_bar_route_light;
 		}
 		return -1;
+	}
+
+	private void buildBottomView() {
+		if (view != null) {
+			LinearLayout bottomView = view.findViewById(R.id.context_menu_bottom_view);
+			View view = getMapActivity().getLayoutInflater().inflate(R.layout.route_info_statistic, bottomView);
+			view.setBackgroundColor(ContextCompat.getColor(getMapActivity(), nightMode ? R.color.route_info_bg_dark : R.color.route_info_bg_light));
+		}
 	}
 
 	private int getViewY() {
