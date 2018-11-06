@@ -416,7 +416,7 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 			if (checked) {
 				Drawable normal = ctx.getUIUtilities().getIcon(mode.getSmallIconDark(), nightMode ? R.color.route_info_checked_mode_icon_color_dark : R.color.route_info_active_light);
 				if (Build.VERSION.SDK_INT >= 21) {
-					Drawable active = ctx.getUIUtilities().getIcon(mode.getSmallIconDark(), R.color.route_info_unchecked_mode_icon_color);
+					Drawable active = ctx.getUIUtilities().getIcon(mode.getSmallIconDark(), nightMode ? R.color.route_info_control_icon_color_dark : R.color.route_info_control_icon_color_light);
 					normal = AndroidUtils.createPressedStateListDrawable(normal, active);
 				}
 				iv.setImageDrawable(normal);

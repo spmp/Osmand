@@ -763,8 +763,8 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 
 		ColorStateList selectedLangColorStateList = AndroidUtils.createPressedColorStateList(
 				getContext(), nightMode,
-				R.color.active_buttons_and_links_light, R.color.description_font_and_bottom_sheet_icons,
-				R.color.active_buttons_and_links_dark, R.color.description_font_and_bottom_sheet_icons
+				R.color.active_buttons_and_links_light, R.color.route_info_bg_light,
+				R.color.active_buttons_and_links_dark, R.color.main_font_dark
 		);
 
 		((TextView) mainView.findViewById(R.id.from_button_description)).setTextColor(selectedLangColorStateList);
