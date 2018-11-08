@@ -9,10 +9,10 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center"
-		android:paddingBottom="@dimen/route_info_icon_padding_bottom"
+		android:paddingBottom="@dimen/route_info_icon_vertical_padding"
 		android:paddingLeft="@dimen/route_info_icon_padding_left"
 		android:paddingRight="@dimen/route_info_icon_padding_left"
-		android:paddingTop="@dimen/route_info_icon_padding_top"
+		android:paddingTop="@dimen/route_info_icon_vertical_padding"
 		android:scaleType="center"
 		tools:background="@drawable/btn_border_trans_light"
 		tools:src="@drawable/ic_dashboard_dark" />

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical">
+
+	<View
+		android:id="@+id/dividerControlButtons"
+		android:layout_width="match_parent"
+		android:layout_height="1dp"
+		android:focusable="false" />
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="48dp"
+		android:orientation="horizontal">
+
+		<FrameLayout
+			android:id="@+id/cancel_button"
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="1">
+
+			<TextView
+				android:id="@+id/cancel_button_descr"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:background="?attr/selectableItemBackground"
+				android:gravity="center"
+				android:text="@string/shared_string_cancel"
+				android:textSize="@dimen/empty_state_text_desc_size" />
+
+		</FrameLayout>
+
+		<FrameLayout
+			android:id="@+id/start_button"
+			android:layout_width="0dp"
+			android:layout_height="match_parent"
+			android:layout_weight="1">
+
+			<ImageView
+				android:id="@+id/start_icon"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_vertical"
+				android:padding="@dimen/route_info_icon_padding_left"
+				tools:src="@drawable/ic_action_start_navigation" />
+
+			<TextView
+				android:id="@+id/start_button_descr"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:background="?attr/selectableItemBackground"
+				android:gravity="center"
+				android:text="@string/shared_string_control_start"
+				android:textSize="@dimen/empty_state_text_desc_size" />
+
+		</FrameLayout>
+
+	</LinearLayout>
+
+</LinearLayout>

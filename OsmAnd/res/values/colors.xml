@@ -397,8 +397,12 @@
 	<color name="route_info_bg_dark">#17191a</color>
 	<color name="route_info_bottom_view_bg_light">#f2f2f2</color>
 	<color name="route_info_bottom_view_bg_dark">#222526</color>
-	<color name="route_info_divider_light">#f0f0f0</color>
-	<color name="route_info_divider_dark">#1b1d1f</color>
+	<color name="route_info_divider_light">#e6e6e6</color>
+	<color name="route_info_divider_dark">#2d3133</color>
+
+	<color name="route_info_divider_light2">#f0f0f0</color>
+	<color name="route_info_divider_dark2">#1b1d1f</color>
+
 	<color name="route_info_control_icon_color_light">#505050</color>
 	<color name="route_info_control_icon_color_dark">#727272</color>
 	<color name="route_info_go_btn_inking_light">#4c63e6</color>
@@ -410,6 +414,8 @@
 	<color name="route_info_checked_mode_icon_color_light">#ff8800</color>
 	<color name="route_info_checked_mode_icon_color_dark">#d28521</color>
 	<color name="route_info_unchecked_mode_icon_color">#727272</color>
+	<color name="route_info_cancel_button_color_light">#5959ff</color>
+	<color name="route_info_cancel_button_color_dark">#17181a</color>
 
 	<color name="multi_selection_menu_divider_light">#f0f0f0</color>
 	<color name="multi_selection_menu_divider_dark">#222526</color>

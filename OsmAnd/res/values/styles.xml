@@ -9,23 +9,6 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
-    <style name="SelectableDarkItemTheme">
-        <item name="colorControlHighlight">@color/active_buttons_and_links_dark</item>
-    </style>
-
-    <style name="SelectableLightItemTheme">
-        <item name="colorControlHighlight">@color/active_buttons_and_links_light</item>
-    </style>
-
-    <style name="SelectableDarkItemBackground">
-        <item name="android:theme">@style/SelectableDarkItemTheme</item>
-        <item name="android:background">?attr/selectableItemBackground</item>
-    </style>
-
-    <style name="SelectableLightItemBackground">
-        <item name="android:theme">@style/SelectableLightItemTheme</item>
-        <item name="android:background">?attr/selectableItemBackground</item>
-    </style>
 
     <style name="OsmandListView" parent="@android:style/Widget.ListView">
     </style>
@@ -251,11 +234,6 @@
 
         <item name="text_rounded_bg_active">@drawable/text_rounded_bg_active_light</item>
         <item name="text_rounded_bg_regular">@drawable/text_rounded_bg_regular_light</item>
-
-        <item name="route_info_btn_rounded">@drawable/btn_border_trans_rounded_light</item>
-        <item name="route_info_btn">@drawable/btn_border_trans_light</item>
-        <item name="route_info_selectable_bg">@color/active_buttons_and_links_light</item>
-        <item name="route_info_gradient">@drawable/route_info_trans_gradient_light</item>
     </style>
 
     <style name="OverflowMenuButton" parent="@style/Widget.AppCompat.ActionButton.Overflow">
@@ -476,10 +454,6 @@
 
         <item name="text_rounded_bg_active">@drawable/text_rounded_bg_active_dark</item>
         <item name="text_rounded_bg_regular">@drawable/text_rounded_bg_regular_dark</item>
-        <item name="route_info_btn_rounded">@drawable/btn_border_trans_rounded_dark</item>
-        <item name="route_info_btn">@drawable/btn_border_trans_dark</item>
-        <item name="route_info_selectable_bg">@color/active_buttons_and_links_dark</item>
-        <item name="route_info_gradient">@drawable/route_info_trans_gradient_dark</item>
     </style>
 
     <style name="FreeVersionBanner" parent="OsmandDarkTheme">

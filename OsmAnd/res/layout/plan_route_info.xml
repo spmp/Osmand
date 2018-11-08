@@ -14,7 +14,7 @@
 		android:orientation="vertical">
 
 		<LinearLayout
-			android:id="@+id/context_menu_top_shadow_all"
+			android:id="@+id/route_menu_top_shadow_all"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:orientation="vertical"
@@ -71,7 +71,7 @@
 					android:layout_width="wrap_content"
 					android:layout_height="match_parent"
 					android:layout_gravity="end"
-					android:background="?attr/route_info_gradient">
+					tools:background="@drawable/route_info_trans_gradient_light">
 
 					<ImageView
 						android:id="@+id/app_modes_options"
@@ -167,8 +167,8 @@
 										android:layout_marginLeft="@dimen/content_padding_small"
 										android:layout_marginRight="@dimen/content_padding_small"
 										android:layout_marginTop="@dimen/bottom_sheet_content_margin_small"
-										android:background="?attr/route_info_btn_rounded"
 										android:gravity="end"
+										tools:background="@drawable/btn_border_trans_rounded_dark"
 										tools:visibility="visible">
 
 										<TextView
@@ -204,10 +204,10 @@
 								android:id="@+id/dividerFromDropDown"
 								android:layout_width="match_parent"
 								android:layout_height="1dp"
-								android:layout_marginEnd="@dimen/route_info_directions_margin"
-								android:layout_marginLeft="@dimen/route_info_divider_margin"
-								android:layout_marginRight="@dimen/route_info_directions_margin"
-								android:layout_marginStart="@dimen/route_info_divider_margin"
+								android:layout_marginEnd="@dimen/route_info_end_divider_margin"
+								android:layout_marginLeft="@dimen/route_info_start_divider_margin"
+								android:layout_marginRight="@dimen/route_info_end_divider_margin"
+								android:layout_marginStart="@dimen/route_info_start_divider_margin"
 								android:background="@color/dashboard_divider_dark"
 								android:focusable="false" />
 
@@ -272,9 +272,9 @@
 										android:layout_marginLeft="@dimen/content_padding_small"
 										android:layout_marginRight="@dimen/content_padding_small"
 										android:layout_marginTop="@dimen/bottom_sheet_content_margin_small"
-										android:background="?attr/route_info_btn_rounded"
 										android:gravity="end"
-										android:visibility="visible">
+										android:visibility="visible"
+										tools:background="@drawable/btn_border_trans_rounded_dark">
 
 										<TextView
 											android:id="@+id/via_button_description"
@@ -309,10 +309,10 @@
 								android:id="@+id/viaLayoutDivider"
 								android:layout_width="match_parent"
 								android:layout_height="1dp"
-								android:layout_marginEnd="@dimen/route_info_directions_margin"
-								android:layout_marginLeft="@dimen/route_info_divider_margin"
-								android:layout_marginRight="@dimen/route_info_directions_margin"
-								android:layout_marginStart="@dimen/route_info_divider_margin"
+								android:layout_marginEnd="@dimen/route_info_end_divider_margin"
+								android:layout_marginLeft="@dimen/route_info_start_divider_margin"
+								android:layout_marginRight="@dimen/route_info_end_divider_margin"
+								android:layout_marginStart="@dimen/route_info_start_divider_margin"
 								android:background="@color/dashboard_divider_dark"
 								android:focusable="false" />
 
@@ -374,9 +374,9 @@
 										android:layout_marginLeft="@dimen/content_padding_small"
 										android:layout_marginRight="@dimen/content_padding_small"
 										android:layout_marginTop="@dimen/bottom_sheet_content_margin_small"
-										android:background="?attr/route_info_btn_rounded"
 										android:gravity="end"
-										android:visibility="visible">
+										android:visibility="visible"
+										tools:background="@drawable/btn_border_trans_rounded_dark">
 
 										<TextView
 											android:id="@+id/to_button_description"
@@ -443,7 +443,6 @@
 						android:layout_marginLeft="@dimen/bottom_sheet_content_margin_small"
 						android:layout_marginRight="@dimen/bottom_sheet_content_margin_small"
 						android:layout_marginTop="@dimen/bottom_sheet_content_margin_small"
-						android:background="?attr/route_info_btn"
 						android:drawablePadding="@dimen/content_padding_small"
 						android:ellipsize="end"
 						android:gravity="center"
@@ -451,6 +450,7 @@
 						android:paddingRight="@dimen/content_padding_small"
 						android:textSize="@dimen/default_sub_text_size"
 						android:textStyle="bold"
+						tools:background="@drawable/btn_border_trans_dark"
 						tools:drawableLeft="@drawable/ic_action_volume_up"
 						tools:drawableStart="@drawable/ic_action_volume_up"
 						tools:text="@string/menu_mute_on" />
@@ -484,19 +484,20 @@
 		</LinearLayout>
 
 		<FrameLayout
+			android:id="@+id/bottom_container"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			android:foreground="@drawable/bg_contextmenu_shadow"
-			android:foregroundGravity="top|fill_horizontal">
+			android:foregroundGravity="top|fill_horizontal"
+			tools:foreground="@drawable/bg_contextmenu_shadow">
 
 			<net.osmand.plus.LockableScrollView
-				android:id="@+id/context_menu_bottom_scroll"
+				android:id="@+id/route_menu_bottom_scroll"
 				android:layout_width="match_parent"
 				android:layout_height="match_parent"
 				tools:background="?attr/ctx_menu_info_view_bg">
 
 				<LinearLayout
-					android:id="@+id/context_menu_bottom_view"
+					android:id="@+id/route_menu_bottom_view"
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
 					android:orientation="vertical"
@@ -555,5 +556,12 @@
 		</android.support.v7.widget.Toolbar>
 
 	</android.support.design.widget.AppBarLayout>
+
+	<include
+		android:id="@+id/control_buttons"
+		layout="@layout/route_info_menu_control_buttons"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="bottom" />
 
 </FrameLayout>

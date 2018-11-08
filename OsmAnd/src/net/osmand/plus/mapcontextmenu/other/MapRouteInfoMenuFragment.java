@@ -3,7 +3,6 @@ package net.osmand.plus.mapcontextmenu.other;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.res.ColorStateList;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -22,6 +22,7 @@ import android.view.ViewParent;
 import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.OverScroller;
 import android.widget.ProgressBar;
@@ -29,6 +30,7 @@ import android.widget.TextView;
 
 import net.osmand.AndroidUtils;
 import net.osmand.plus.LockableScrollView;
+import net.osmand.plus.OsmandApplication;
 import net.osmand.plus.R;
 import net.osmand.plus.activities.MapActivity;
 import net.osmand.plus.base.BaseOsmAndFragment;
@@ -46,9 +48,6 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 	private MapRouteInfoMenu menu;
 	private InterceptorLinearLayout mainView;
 	private View toolbarContainer;
-	private View toolbarView;
-	private View toolbarBackButton;
-	private TextView toolbarTextView;
 	private View view;
 	private View.OnLayoutChangeListener containerLayoutListener;
 
@@ -57,7 +56,6 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 	private boolean moving;
 	private boolean forceUpdateLayout;
 	private boolean initLayout = true;
-	private boolean centered;
 
 	private int menuFullHeight;
 	private int minHalfY;
@@ -107,9 +105,7 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 
 
 		toolbarContainer = view.findViewById(R.id.context_menu_toolbar_container);
-		toolbarView = view.findViewById(R.id.context_menu_toolbar);
-		toolbarBackButton = view.findViewById(R.id.context_menu_toolbar_back);
-		toolbarTextView = (TextView) view.findViewById(R.id.context_menu_toolbar_text);
+		View toolbarBackButton = view.findViewById(R.id.context_menu_toolbar_back);
 		updateVisibility(toolbarContainer, 0);
 		toolbarBackButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -118,11 +114,17 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 			}
 		});
 
-		LockableScrollView bottomScrollView = (LockableScrollView) view.findViewById(R.id.context_menu_bottom_scroll);
+		FrameLayout bottomContainer = (FrameLayout) view.findViewById(R.id.bottom_container);
+		if (!menu.isRouteCalculated()) {
+			bottomContainer.setForeground(getContentIcon(R.drawable.bg_contextmenu_shadow));
+		} else {
+			bottomContainer.setForeground(null);
+		}
+		LockableScrollView bottomScrollView = (LockableScrollView) view.findViewById(R.id.route_menu_bottom_scroll);
 		bottomScrollView.setScrollingEnabled(false);
 		bottomScrollView.setBackgroundColor(getResources()
 				.getColor(nightMode ? R.color.ctx_menu_bottom_view_bg_dark : R.color.ctx_menu_bottom_view_bg_light));
-		view.findViewById(R.id.context_menu_bottom_view).setBackgroundColor(getResources()
+		view.findViewById(R.id.route_menu_bottom_view).setBackgroundColor(getResources()
 				.getColor(nightMode ? R.color.ctx_menu_bottom_view_bg_dark : R.color.ctx_menu_bottom_view_bg_light));
 
 		buildBottomView();
@@ -133,6 +135,14 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 			mainView.setBackgroundResource(typedValueAttr.resourceId);
 			mainView.setLayoutParams(new FrameLayout.LayoutParams(getResources().getDimensionPixelSize(R.dimen.dashboard_land_width),
 					ViewGroup.LayoutParams.MATCH_PARENT));
+
+			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+					AndroidUtils.dpToPx(getMyApplication(),345f),
+					ViewGroup.LayoutParams.WRAP_CONTENT);
+
+			params.gravity = Gravity.BOTTOM;
+			view.findViewById(R.id.control_buttons)
+					.setLayoutParams(params);
 		}
 
 		runLayoutListener();
@@ -341,7 +351,7 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 
 	private void buildBottomView() {
 		if (view != null) {
-			LinearLayout bottomView = view.findViewById(R.id.context_menu_bottom_view);
+			LinearLayout bottomView = view.findViewById(R.id.route_menu_bottom_view);
 			View view = getMapActivity().getLayoutInflater().inflate(R.layout.route_info_statistic, bottomView);
 			view.setBackgroundColor(ContextCompat.getColor(getMapActivity(), nightMode ? R.color.route_info_bg_dark : R.color.route_info_bg_light));
 		}
@@ -373,7 +383,7 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 	}
 
 	private int getHeaderOnlyTopY() {
-		return viewHeight - menuTitleHeight;
+		return viewHeight - menuTitleHeight - AndroidUtils.dpToPx(getMyApplication(),48f);
 	}
 
 	public void openMenuFullScreen() {
@@ -641,13 +651,13 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 						}
 
 						menuFullHeight = view.findViewById(R.id.main_view).getHeight();
-						int newMenuTopShadowAllHeight = view.findViewById(R.id.context_menu_top_shadow_all).getHeight();
+						int newMenuTopShadowAllHeight = view.findViewById(R.id.route_menu_top_shadow_all).getHeight();
 
 						int dy = shadowHeight;
 
 						menuTopShadowAllHeight = newMenuTopShadowAllHeight;
 						menuTitleHeight = menuTopShadowAllHeight + dy;
-						menuBottomViewHeight = view.findViewById(R.id.context_menu_bottom_view).getHeight();
+						menuBottomViewHeight = view.findViewById(R.id.route_menu_bottom_view).getHeight();
 
 						menuFullHeightMax = menuTitleHeight + menuBottomViewHeight;
 
@@ -664,7 +674,7 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 
 	private void doLayoutMenu() {
 		final int posY = getPosY(getViewY(), false, menu.getCurrentMenuState());
-		setViewY(posY, true, !initLayout || !centered);
+		setViewY(posY, true, !initLayout);
 		updateMainViewLayout(posY);
 	}
 
@@ -686,7 +696,7 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 
 	public void updateInfo() {
 		if (menu != null) {
-			menu.updateInfo(mainView);
+			menu.updateInfo(view);
 			applyDayNightMode();
 			runLayoutListener();
 		}
@@ -712,6 +722,27 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 		View progressBar = mainView.findViewById(R.id.progress_bar);
 		if (progressBar != null) {
 			progressBar.setVisibility(View.GONE);
+		}
+	}
+
+	public void updateControlButtons() {
+		OsmandApplication app = getMyApplication();
+		if (app != null) {
+			boolean routeCalculated = menu.isRouteCalculated();
+
+			if (routeCalculated) {
+				AndroidUtils.setBackground(app, view.findViewById(R.id.start_button), nightMode,
+						R.color.active_buttons_and_links_light, R.color.active_buttons_and_links_dark);
+				int color = nightMode ? R.color.main_font_dark : R.color.card_and_list_background_light;
+				((TextView) view.findViewById(R.id.start_button_descr)).setTextColor(ContextCompat.getColor(getMapActivity(), color));
+				((ImageView) view.findViewById(R.id.start_icon)).setImageDrawable(app.getUIUtilities().getIcon(R.drawable.ic_action_start_navigation, color));
+			} else {
+				AndroidUtils.setBackground(app, view.findViewById(R.id.start_button), nightMode,
+						R.color.activity_background_light, R.color.route_info_cancel_button_color_dark);
+				int color = R.color.description_font_and_bottom_sheet_icons;
+				((TextView) view.findViewById(R.id.start_button_descr)).setTextColor(ContextCompat.getColor(getMapActivity(), color));
+				((ImageView) view.findViewById(R.id.start_icon)).setImageDrawable(app.getUIUtilities().getIcon(R.drawable.ic_action_start_navigation, color));
+			}
 		}
 	}
 
@@ -771,6 +802,12 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 				R.drawable.btn_border_trans_light, R.drawable.btn_border_trans_dark);
 		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.dividerToDropDown), nightMode,
 				R.color.route_info_divider_light, R.color.route_info_divider_dark);
+		AndroidUtils.setBackground(ctx, view.findViewById(R.id.cancel_button), nightMode,
+				R.color.card_and_list_background_light, R.color.card_and_list_background_dark);
+		AndroidUtils.setBackground(ctx, view.findViewById(R.id.dividerControlButtons), nightMode,
+				R.color.route_info_divider_light, R.color.route_info_divider_dark);
+		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.info_divider), nightMode,
+				R.color.activity_background_light, R.color.route_info_cancel_button_color_dark);
 
 		int color = ContextCompat.getColor(getMapActivity(), nightMode ? R.color.active_buttons_and_links_dark : R.color.active_buttons_and_links_light);
 
@@ -780,12 +817,23 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 		((TextView) mainView.findViewById(R.id.sound_setting_button_descr)).setTextColor(color);
 		((TextView) mainView.findViewById(R.id.map_options_route_button)).setTextColor(color);
 
+		((TextView) view.findViewById(R.id.cancel_button_descr)).setTextColor(ContextCompat.getColor(getMapActivity(), nightMode ? R.color.active_buttons_and_links_dark  : R.color.route_info_cancel_button_color_light));
+
 		AndroidUtils.setTextPrimaryColor(ctx, (TextView) mainView.findViewById(R.id.ViaView), nightMode);
 		AndroidUtils.setTextSecondaryColor(ctx, (TextView) mainView.findViewById(R.id.ViaSubView), nightMode);
 		AndroidUtils.setTextSecondaryColor(ctx, (TextView) mainView.findViewById(R.id.toTitle), nightMode);
 		AndroidUtils.setTextSecondaryColor(ctx, (TextView) mainView.findViewById(R.id.fromTitle), nightMode);
 
 		ctx.setupRouteCalculationProgressBar((ProgressBar) mainView.findViewById(R.id.progress_bar));
+
+		FrameLayout bottomContainer = (FrameLayout) view.findViewById(R.id.bottom_container);
+		if (!menu.isRouteCalculated()) {
+			bottomContainer.setForeground(getContentIcon(R.drawable.bg_contextmenu_shadow));
+		} else {
+			bottomContainer.setForeground(null);
+		}
+
+		updateControlButtons();
 	}
 
 	public static boolean showInstance(final MapActivity mapActivity) {

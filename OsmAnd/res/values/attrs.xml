@@ -103,11 +103,6 @@
 
 		<attr name="text_rounded_bg_regular" format="reference" />
 		<attr name="text_rounded_bg_active" format="reference" />
-
-	    <attr name="route_info_btn_rounded" format="reference" />
-	    <attr name="route_info_btn" format="reference" />
-	    <attr name="route_info_selectable_bg" format="reference" />
-	    <attr name="route_info_gradient" format="reference" />
 	</declare-styleable>
 
     <declare-styleable name="PagerSlidingTabStrip">

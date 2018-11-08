@@ -1029,6 +1029,71 @@ public class GpxUiHelper {
 		legend.setEnabled(false);
 	}
 
+	public static void setupSimpleGPXChart(OsmandApplication ctx, LineChart mChart, int yLabelsCount) {
+		OsmandSettings settings = ctx.getSettings();
+		boolean light = settings.isLightContent();
+
+		if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+			mChart.setHardwareAccelerationEnabled(false);
+		} else {
+			mChart.setHardwareAccelerationEnabled(true);
+		}
+		mChart.setTouchEnabled(false);
+		mChart.setDragEnabled(false);
+		mChart.setScaleEnabled(false);
+		mChart.setPinchZoom(false);
+		mChart.setScaleYEnabled(false);
+		mChart.setAutoScaleMinMaxEnabled(true);
+		mChart.setDrawBorders(false);
+		mChart.getDescription().setEnabled(false);
+		mChart.setMaxVisibleValueCount(10);
+		mChart.setMinOffset(0f);
+		mChart.setDragDecelerationEnabled(false);
+
+//		mChart.setExtraTopOffset(24f);
+//		mChart.setExtraBottomOffset(16f);
+
+		// create a custom MarkerView (extend MarkerView) and specify the layout
+		// to use for it
+		GPXMarkerView mv = new GPXMarkerView(mChart.getContext());
+		mv.setChartView(mChart); // For bounds control
+		mChart.setMarker(mv); // Set the marker to the chart
+		mChart.setDrawMarkers(true);
+
+		XAxis xAxis = mChart.getXAxis();
+		xAxis.setDrawAxisLine(false);
+		xAxis.setDrawGridLines(true);
+		xAxis.setGridLineWidth(1.5f);
+		xAxis.setGridColor(ActivityCompat.getColor(mChart.getContext(), R.color.gpx_chart_black_grid));
+		xAxis.enableGridDashedLine(25f, Float.MAX_VALUE, 0f);
+		xAxis.setPosition(BOTTOM);
+		xAxis.setTextColor(light ? mChart.getResources().getColor(R.color.secondary_text_light) : mChart.getResources().getColor(R.color.secondary_text_dark));
+
+		YAxis yAxis = mChart.getAxisLeft();
+		yAxis.enableGridDashedLine(10f, 5f, 0f);
+		yAxis.setGridColor(ActivityCompat.getColor(mChart.getContext(), R.color.divider_color));
+		yAxis.setDrawAxisLine(false);
+		yAxis.setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART);
+		yAxis.setXOffset(16f);
+		yAxis.setYOffset(-6f);
+		yAxis.setLabelCount(yLabelsCount);
+		yAxis.setTextColor(light ? mChart.getResources().getColor(R.color.secondary_text_light) : mChart.getResources().getColor(R.color.secondary_text_dark));
+
+		yAxis = mChart.getAxisRight();
+		yAxis.enableGridDashedLine(10f, 5f, 0f);
+		yAxis.setGridColor(ActivityCompat.getColor(mChart.getContext(), R.color.divider_color));
+		yAxis.setDrawAxisLine(false);
+		yAxis.setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART);
+		yAxis.setXOffset(16f);
+		yAxis.setYOffset(-6f);
+		yAxis.setLabelCount(yLabelsCount);
+		yAxis.setTextColor(light ? mChart.getResources().getColor(R.color.secondary_text_light) : mChart.getResources().getColor(R.color.secondary_text_dark));
+		yAxis.setEnabled(false);
+
+		Legend legend = mChart.getLegend();
+		legend.setEnabled(false);
+	}
+
 	private static float setupXAxisDistance(OsmandApplication ctx, XAxis xAxis, float meters) {
 		OsmandSettings settings = ctx.getSettings();
 		OsmandSettings.MetricsConstants mc = settings.METRIC_SYSTEM.get();
