@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
-	android:id="@+id/details_card"
+	android:id="@+id/route_info_details_card"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:orientation="vertical">
@@ -126,16 +126,6 @@
 
 					</LinearLayout>
 
-					<TextView
-						android:id="@+id/InfoTextView"
-						android:layout_width="0dp"
-						android:layout_height="wrap_content"
-						android:layout_gravity="center_vertical|left"
-						android:layout_margin="8dp"
-						android:layout_weight="1"
-						android:textSize="@dimen/default_desc_text_size"
-						android:visibility="gone" />
-
 				</LinearLayout>
 
 			</LinearLayout>
@@ -195,7 +185,6 @@
 	<include
 		android:id="@+id/shadow"
 		layout="@layout/card_bottom_divider"
-		android:visibility="visible"
-		tools:visibility="visible" />
+		android:visibility="visible" />
 
 </LinearLayout>

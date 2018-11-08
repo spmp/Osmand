@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
 import net.osmand.AndroidUtils;
 import net.osmand.Location;
 import net.osmand.core.android.MapRendererContext;
@@ -307,6 +308,34 @@ public class MapControlsLayer extends OsmandMapLayer {
 	public void updateRouteButtons(View main, boolean routeInfo) {
 		boolean nightMode = mapActivity.getMyApplication().getDaynightHelper().isNightModeForMapControls();
 
+		View startButton = main.findViewById(R.id.start_button);
+		if (mapRouteInfoMenu.isRouteCalculated()) {
+			AndroidUtils.setBackground(app, startButton, nightMode, R.color.active_buttons_and_links_light, R.color.active_buttons_and_links_dark);
+			int color = nightMode ? R.color.main_font_dark : R.color.card_and_list_background_light;
+			((TextView) main.findViewById(R.id.start_button_descr)).setTextColor(ContextCompat.getColor(app, color));
+			((ImageView) main.findViewById(R.id.start_icon)).setImageDrawable(app.getUIUtilities().getIcon(R.drawable.ic_action_start_navigation, color));
+		} else {
+			AndroidUtils.setBackground(app, startButton, nightMode, R.color.activity_background_light, R.color.route_info_cancel_button_color_dark);
+			int color = R.color.description_font_and_bottom_sheet_icons;
+			((TextView) main.findViewById(R.id.start_button_descr)).setTextColor(ContextCompat.getColor(app, color));
+			((ImageView) main.findViewById(R.id.start_icon)).setImageDrawable(app.getUIUtilities().getIcon(R.drawable.ic_action_start_navigation, color));
+		}
+		startButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				clickRouteGo();
+			}
+		});
+
+		View cancelButton = main.findViewById(R.id.cancel_button);
+		AndroidUtils.setBackground(app, cancelButton, nightMode, R.color.card_and_list_background_light, R.color.card_and_list_background_dark);
+		main.findViewById(R.id.cancel_button).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				clickRouteCancel();
+			}
+		});
+
 		TextView options = (TextView) main.findViewById(R.id.map_options_route_button);
 		Drawable drawable = !routeInfo ? app.getUIUtilities().getIcon(R.drawable.map_action_settings, R.color.osmand_orange)
 				: app.getUIUtilities().getIcon(R.drawable.map_action_settings, nightMode ? R.color.route_info_control_icon_color_dark : R.color.route_info_control_icon_color_light);
@@ -342,7 +371,6 @@ public class MapControlsLayer extends OsmandMapLayer {
 				soundOption.setText(text);
 			}
 		});
-
 	}
 
 	public void setControlsClickable(boolean clickable) {

@@ -114,18 +114,21 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 			}
 		});
 
+
+		LockableScrollView bottomScrollView = (LockableScrollView) view.findViewById(R.id.route_menu_bottom_scroll);
+		bottomScrollView.setScrollingEnabled(false);
+		bottomScrollView.setBackgroundColor(getResources()
+				.getColor(nightMode ? R.color.activity_background_dark : R.color.activity_background_light));
+
 		FrameLayout bottomContainer = (FrameLayout) view.findViewById(R.id.bottom_container);
 		if (!menu.isRouteCalculated()) {
 			bottomContainer.setForeground(getContentIcon(R.drawable.bg_contextmenu_shadow));
 		} else {
 			bottomContainer.setForeground(null);
 		}
-		LockableScrollView bottomScrollView = (LockableScrollView) view.findViewById(R.id.route_menu_bottom_scroll);
-		bottomScrollView.setScrollingEnabled(false);
-		bottomScrollView.setBackgroundColor(getResources()
-				.getColor(nightMode ? R.color.ctx_menu_bottom_view_bg_dark : R.color.ctx_menu_bottom_view_bg_light));
+
 		view.findViewById(R.id.route_menu_bottom_view).setBackgroundColor(getResources()
-				.getColor(nightMode ? R.color.ctx_menu_bottom_view_bg_dark : R.color.ctx_menu_bottom_view_bg_light));
+				.getColor(nightMode ? R.color.activity_background_dark : R.color.activity_background_light));
 
 		buildBottomView();
 
@@ -802,12 +805,14 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 				R.drawable.btn_border_trans_light, R.drawable.btn_border_trans_dark);
 		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.dividerToDropDown), nightMode,
 				R.color.route_info_divider_light, R.color.route_info_divider_dark);
-		AndroidUtils.setBackground(ctx, view.findViewById(R.id.cancel_button), nightMode,
-				R.color.card_and_list_background_light, R.color.card_and_list_background_dark);
 		AndroidUtils.setBackground(ctx, view.findViewById(R.id.dividerControlButtons), nightMode,
 				R.color.route_info_divider_light, R.color.route_info_divider_dark);
 		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.info_divider), nightMode,
 				R.color.activity_background_light, R.color.route_info_cancel_button_color_dark);
+		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.route_info_details_card), nightMode,
+				R.color.activity_background_light, R.color.route_info_cancel_button_color_dark);
+		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.RouteInfoControls), nightMode,
+				R.color.route_info_bg_light, R.color.route_info_bg_dark);
 
 		int color = ContextCompat.getColor(getMapActivity(), nightMode ? R.color.active_buttons_and_links_dark : R.color.active_buttons_and_links_light);
 

@@ -327,7 +327,6 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 		updateToSpinner(main);
 		updateApplicationModes(main);
 		updateApplicationModesOptions(main);
-		updateControlButtons(main);
 
 		mapControlsLayer.updateRouteButtons(main, true);
 		FrameLayout bottomContainer = (FrameLayout) mainView.findViewById(R.id.bottom_container);
@@ -353,25 +352,6 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 			@Override
 			public void onClick(View v) {
 				availableProfileDialog();
-			}
-		});
-	}
-
-	private void updateControlButtons(final View parentView) {
-		parentView.findViewById(R.id.cancel_button).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (mapActivity != null) {
-					mapActivity.getMapLayers().getMapControlsLayer().stopNavigation();
-				}
-			}
-		});
-		parentView.findViewById(R.id.start_button).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (mapActivity != null) {
-					mapActivity.getMapLayers().getMapControlsLayer().startNavigation();
-				}
 			}
 		});
 	}
@@ -423,20 +403,17 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 	private void updateRouteCalcProgress(final View main) {
 		TargetPointsHelper targets = getTargets();
 		if (targets.hasTooLongDistanceToNavigate()) {
-			main.findViewById(R.id.dividerToDropDown).setVisibility(View.VISIBLE);
-			main.findViewById(R.id.RouteInfoControls).setVisibility(View.VISIBLE);
-			TextView textView = (TextView) main.findViewById(R.id.InfoTextView);
+//			main.findViewById(R.id.dividerToDropDown).setVisibility(View.VISIBLE);
+			main.findViewById(R.id.route_info_details_card).setVisibility(View.VISIBLE);
 			ImageView iconView = (ImageView) main.findViewById(R.id.InfoIcon);
 			main.findViewById(R.id.InfoIcon).setVisibility(View.GONE);
 			main.findViewById(R.id.DurationIcon).setVisibility(View.GONE);
 			main.findViewById(R.id.InfoDistance).setVisibility(View.GONE);
 			main.findViewById(R.id.InfoDuration).setVisibility(View.GONE);
-			textView.setText(R.string.route_is_too_long_v2);
-			textView.setVisibility(View.VISIBLE);
 			iconView.setImageDrawable(mapActivity.getMyApplication().getUIUtilities().getIcon(R.drawable.ic_warning, isLight()));
 		} else {
-			main.findViewById(R.id.dividerToDropDown).setVisibility(View.GONE);
-			main.findViewById(R.id.RouteInfoControls).setVisibility(View.GONE);
+//			main.findViewById(R.id.dividerToDropDown).setVisibility(View.GONE);
+			main.findViewById(R.id.route_info_details_card).setVisibility(View.GONE);
 		}
 	}
 
@@ -536,7 +513,7 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 
 	private void updateRouteButtons(final View mainView) {
 		mainView.findViewById(R.id.dividerToDropDown).setVisibility(View.VISIBLE);
-		mainView.findViewById(R.id.RouteInfoControls).setVisibility(View.VISIBLE);
+		mainView.findViewById(R.id.route_info_details_card).setVisibility(View.VISIBLE);
 		final OsmandApplication ctx = mapActivity.getMyApplication();
 
 		View info = mainView.findViewById(R.id.info_container);
@@ -547,7 +524,6 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 			}
 		});
 
-		TextView textView = (TextView) mainView.findViewById(R.id.InfoTextView);
 		ImageView infoIcon = (ImageView) mainView.findViewById(R.id.InfoIcon);
 		ImageView durationIcon = (ImageView) mainView.findViewById(R.id.DurationIcon);
 		View infoDistanceView = mainView.findViewById(R.id.InfoDistance);
@@ -557,7 +533,6 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 			durationIcon.setVisibility(View.GONE);
 			infoDistanceView.setVisibility(View.GONE);
 			infoDurationView.setVisibility(View.GONE);
-			textView.setVisibility(View.VISIBLE);
 		} else {
 			infoIcon.setImageDrawable(ctx.getUIUtilities().getIcon(R.drawable.ic_action_route_distance, R.color.route_info_unchecked_mode_icon_color));
 			infoIcon.setVisibility(View.VISIBLE);
@@ -565,16 +540,10 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 			durationIcon.setVisibility(View.VISIBLE);
 			infoDistanceView.setVisibility(View.VISIBLE);
 			infoDurationView.setVisibility(View.VISIBLE);
-			textView.setVisibility(View.GONE);
 		}
 		if (directionInfo >= 0 && routingHelper.getRouteDirections() != null
 				&& directionInfo < routingHelper.getRouteDirections().size()) {
 			RouteDirectionInfo ri = routingHelper.getRouteDirections().get(directionInfo);
-			if (!ri.getDescriptionRoutePart().endsWith(OsmAndFormatter.getFormattedDistance(ri.distance, ctx))) {
-				textView.setText((directionInfo + 1) + ". " + ri.getDescriptionRoutePart() + " " + OsmAndFormatter.getFormattedDistance(ri.distance, ctx));
-			} else {
-				textView.setText((directionInfo + 1) + ". " + ri.getDescriptionRoutePart());
-			}
 		} else {
 			TextView distanceText = (TextView) mainView.findViewById(R.id.DistanceText);
 			TextView durationText = (TextView) mainView.findViewById(R.id.DurationText);
