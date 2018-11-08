@@ -970,7 +970,6 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 		Drawable normal = mapActivity.getMyApplication().getUIUtilities().getIcon(R.drawable.ic_action_change_navigation_points, nightMode ? R.color.route_info_control_icon_color_dark : R.color.route_info_control_icon_color_light);
 		if (Build.VERSION.SDK_INT >= 21) {
 			Drawable active = mapActivity.getMyApplication().getUIUtilities().getIcon(R.drawable.ic_action_change_navigation_points, nightMode ? R.color.active_buttons_and_links_dark : R.color.active_buttons_and_links_light);
-
 			normal = AndroidUtils.createPressedStateListDrawable(normal, active);
 		}
 
