@@ -156,19 +156,19 @@
 
 		</LinearLayout>
 
-		<LinearLayout
-			android:id="@+id/details"
+		<FrameLayout
+			android:id="@+id/details_button"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="?attr/selectableItemBackground"
+			android:layout_height="36dp"
 			android:orientation="horizontal"
-			android:paddingBottom="@dimen/route_info_details_padding"
-			android:paddingLeft="@dimen/route_info_buttons_padding_top_bottom"
-			android:paddingRight="@dimen/route_info_buttons_padding_top_bottom"
-			android:paddingTop="@dimen/route_info_details_padding">
+			android:layout_gravity="center_vertical"
+			android:layout_marginBottom="@dimen/route_info_details_padding"
+			android:layout_marginLeft="@dimen/route_info_buttons_padding_top_bottom"
+			android:layout_marginRight="@dimen/route_info_buttons_padding_top_bottom"
+			android:layout_marginTop="@dimen/route_info_details_padding">
 
 			<TextView
-				android:id="@+id/details_button"
+				android:id="@+id/details_button_descr"
 				android:layout_width="match_parent"
 				android:layout_height="36dp"
 				android:layout_gravity="center_vertical"
@@ -178,7 +178,7 @@
 				android:textStyle="bold"
 				tools:background="@drawable/btn_border_trans_dark" />
 
-		</LinearLayout>
+		</FrameLayout>
 
 	</LinearLayout>
 

@@ -305,74 +305,6 @@ public class MapControlsLayer extends OsmandMapLayer {
 		trackDetailsMenu = new TrackDetailsMenu(mapActivity);
 	}
 
-	public void updateRouteButtons(View main, boolean routeInfo) {
-		boolean nightMode = mapActivity.getMyApplication().getDaynightHelper().isNightModeForMapControls();
-
-		View startButton = main.findViewById(R.id.start_button);
-		if (mapRouteInfoMenu.isRouteCalculated()) {
-			AndroidUtils.setBackground(app, startButton, nightMode, R.color.active_buttons_and_links_light, R.color.active_buttons_and_links_dark);
-			int color = nightMode ? R.color.main_font_dark : R.color.card_and_list_background_light;
-			((TextView) main.findViewById(R.id.start_button_descr)).setTextColor(ContextCompat.getColor(app, color));
-			((ImageView) main.findViewById(R.id.start_icon)).setImageDrawable(app.getUIUtilities().getIcon(R.drawable.ic_action_start_navigation, color));
-		} else {
-			AndroidUtils.setBackground(app, startButton, nightMode, R.color.activity_background_light, R.color.route_info_cancel_button_color_dark);
-			int color = R.color.description_font_and_bottom_sheet_icons;
-			((TextView) main.findViewById(R.id.start_button_descr)).setTextColor(ContextCompat.getColor(app, color));
-			((ImageView) main.findViewById(R.id.start_icon)).setImageDrawable(app.getUIUtilities().getIcon(R.drawable.ic_action_start_navigation, color));
-		}
-		startButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				clickRouteGo();
-			}
-		});
-
-		View cancelButton = main.findViewById(R.id.cancel_button);
-		AndroidUtils.setBackground(app, cancelButton, nightMode, R.color.card_and_list_background_light, R.color.card_and_list_background_dark);
-		main.findViewById(R.id.cancel_button).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				clickRouteCancel();
-			}
-		});
-
-		TextView options = (TextView) main.findViewById(R.id.map_options_route_button);
-		Drawable drawable = !routeInfo ? app.getUIUtilities().getIcon(R.drawable.map_action_settings, R.color.osmand_orange)
-				: app.getUIUtilities().getIcon(R.drawable.map_action_settings, nightMode ? R.color.route_info_control_icon_color_dark : R.color.route_info_control_icon_color_light);
-		if (Build.VERSION.SDK_INT >= 21) {
-			Drawable active = app.getUIUtilities().getIcon(R.drawable.map_action_settings, nightMode ? R.color.active_buttons_and_links_dark : R.color.active_buttons_and_links_light);
-			drawable = AndroidUtils.createPressedStateListDrawable(drawable, active);
-		}
-		options.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null);
-		options.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				clickRouteParams();
-			}
-		});
-
-		final TextView soundOption = (TextView) main.findViewById(R.id.sound_setting_button_descr);
-		String text = app.getString(R.string.sound_is, (app.getText(app.getRoutingHelper().getVoiceRouter().isMute() ? R.string.shared_string_off : R.string.shared_string_on)));
-		soundOption.setText(text);
-		Drawable sound = !routeInfo ? app.getUIUtilities().getIcon(R.drawable.ic_action_volume_up, R.color.osmand_orange)
-				: app.getUIUtilities().getIcon(R.drawable.ic_action_volume_up, nightMode ? R.color.route_info_control_icon_color_dark : R.color.route_info_control_icon_color_light);
-		if (Build.VERSION.SDK_INT >= 21) {
-			Drawable active = app.getUIUtilities().getIcon(R.drawable.ic_action_volume_up, nightMode ? R.color.active_buttons_and_links_dark : R.color.active_buttons_and_links_light);
-			sound = AndroidUtils.createPressedStateListDrawable(sound, active);
-		}
-		soundOption.setCompoundDrawablesWithIntrinsicBounds(sound, null, null, null);
-		main.findViewById(R.id.sound_setting_button).setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				boolean mt = !app.getRoutingHelper().getVoiceRouter().isMute();
-				settings.VOICE_MUTE.set(mt);
-				app.getRoutingHelper().getVoiceRouter().setMute(mt);
-				String text = app.getString(R.string.sound_is, (app.getText(app.getRoutingHelper().getVoiceRouter().isMute() ? R.string.shared_string_off : R.string.shared_string_on)));
-				soundOption.setText(text);
-			}
-		});
-	}
-
 	public void setControlsClickable(boolean clickable) {
 		for (MapHudButton mb : controls) {
 			mb.iv.setClickable(clickable);
@@ -381,10 +313,6 @@ public class MapControlsLayer extends OsmandMapLayer {
 
 	private TargetPointsHelper getTargets() {
 		return mapActivity.getMyApplication().getTargetPointsHelper();
-	}
-
-	protected void clickRouteParams() {
-		mapActivity.getMapActions().openRoutePreferencesDialog();
 	}
 
 	protected void clickRouteWaypoints() {
@@ -405,17 +333,6 @@ public class MapControlsLayer extends OsmandMapLayer {
 	public void stopNavigationWithoutConfirm() {
 		mapRouteInfoMenu.hide();
 		mapActivity.getMapActions().stopNavigationWithoutConfirm();
-	}
-
-	protected void clickRouteCancel() {
-		stopNavigation();
-	}
-
-	protected void clickRouteGo() {
-		if (app.getTargetPointsHelper().getPointToNavigate() != null) {
-			mapRouteInfoMenu.hide();
-		}
-		startNavigation();
 	}
 
 	public void showRouteInfoControlDialog() {
