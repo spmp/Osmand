@@ -357,7 +357,7 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 		final OsmandSettings settings = mapActivity.getMyApplication().getSettings();
 		final List<ApplicationMode> modes = ApplicationMode.allPossibleValues();
 		modes.remove(ApplicationMode.DEFAULT);
-		final Set<ApplicationMode> selected = new LinkedHashSet<ApplicationMode>(ApplicationMode.values(settings));
+		final Set<ApplicationMode> selected = new LinkedHashSet<ApplicationMode>(ApplicationMode.values(mapActivity.getMyApplication()));
 		selected.remove(ApplicationMode.DEFAULT);
 		View v = AppModeDialog.prepareAppModeView(mapActivity, modes, selected, null, false, true, false,
 				new View.OnClickListener() {
@@ -418,7 +418,7 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 			}
 		};
 		OsmandSettings settings = mapActivity.getMyApplication().getSettings();
-		final List<ApplicationMode> values = new ArrayList<ApplicationMode>(ApplicationMode.values(settings));
+		final List<ApplicationMode> values = new ArrayList<ApplicationMode>(ApplicationMode.values(mapActivity.getMyApplication()));
 		values.remove(ApplicationMode.DEFAULT);
 
 		if (values.size() > 0 && !values.contains(am)) {
@@ -616,9 +616,19 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 			RouteDirectionInfo ri = routingHelper.getRouteDirections().get(directionInfo);
 		} else {
 			TextView distanceText = (TextView) mainView.findViewById(R.id.DistanceText);
+			TextView distanceTitle = (TextView) mainView.findViewById(R.id.DistanceTitle);
 			TextView durationText = (TextView) mainView.findViewById(R.id.DurationText);
+			TextView durationTitle = (TextView) mainView.findViewById(R.id.DurationTitle);
+
 			distanceText.setText(OsmAndFormatter.getFormattedDistance(ctx.getRoutingHelper().getLeftDistance(), ctx));
+
 			durationText.setText(OsmAndFormatter.getFormattedDuration(ctx.getRoutingHelper().getLeftTime(), ctx));
+			durationTitle.setText(ctx.getString(R.string.arrive_at_time, OsmAndFormatter.getFormattedTime(ctx.getRoutingHelper().getLeftTime(), true)));
+
+			AndroidUtils.setTextPrimaryColor(ctx, distanceText, nightMode);
+			AndroidUtils.setTextSecondaryColor(ctx, distanceTitle, nightMode);
+			AndroidUtils.setTextPrimaryColor(ctx, durationText, nightMode);
+			AndroidUtils.setTextSecondaryColor(ctx, durationTitle, nightMode);
 		}
 
 		FrameLayout detailsButton = mainView.findViewById(R.id.details_button);
@@ -643,7 +653,7 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 	private void buildHeader(View headerView) {
 		OsmandApplication app = mapActivity.getMyApplication();
 		final LineChart mChart = (LineChart) headerView.findViewById(R.id.chart);
-		GpxUiHelper.setupSimpleGPXChart(app, mChart, 4);
+		GpxUiHelper.setupSimpleGPXChart(app, mChart, 4,!nightMode);
 
 		GPXUtilities.GPXTrackAnalysis analysis = gpx.getAnalysis(0);
 		if (analysis.hasElevationData) {

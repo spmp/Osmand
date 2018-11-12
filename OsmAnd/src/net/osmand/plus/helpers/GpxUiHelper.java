@@ -1029,10 +1029,7 @@ public class GpxUiHelper {
 		legend.setEnabled(false);
 	}
 
-	public static void setupSimpleGPXChart(OsmandApplication ctx, LineChart mChart, int yLabelsCount) {
-		OsmandSettings settings = ctx.getSettings();
-		boolean light = settings.isLightContent();
-
+	public static void setupSimpleGPXChart(OsmandApplication ctx, LineChart mChart, int yLabelsCount, boolean light) {
 		if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
 			mChart.setHardwareAccelerationEnabled(false);
 		} else {
@@ -1050,8 +1047,8 @@ public class GpxUiHelper {
 		mChart.setMinOffset(0f);
 		mChart.setDragDecelerationEnabled(false);
 
-//		mChart.setExtraTopOffset(24f);
-//		mChart.setExtraBottomOffset(16f);
+		mChart.setExtraTopOffset(4f);
+		mChart.setExtraBottomOffset(4f);
 
 		// create a custom MarkerView (extend MarkerView) and specify the layout
 		// to use for it

@@ -554,11 +554,25 @@
 
 	</android.support.design.widget.AppBarLayout>
 
-	<include
-		android:id="@+id/control_buttons"
-		layout="@layout/route_info_menu_control_buttons"
+	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:layout_gravity="bottom" />
+		android:layout_gravity="bottom"
+		android:orientation="vertical">
+
+		<ImageView
+			android:layout_width="match_parent"
+			android:layout_height="10dp"
+			android:layout_gravity="bottom"
+			android:background="@drawable/bg_contextmenu_shadow_top_light" />
+
+		<include
+			android:id="@+id/control_buttons"
+			layout="@layout/route_info_menu_control_buttons"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="bottom" />
+
+	</LinearLayout>
 
 </FrameLayout>
