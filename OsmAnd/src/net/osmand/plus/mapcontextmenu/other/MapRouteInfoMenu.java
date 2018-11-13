@@ -470,7 +470,7 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 
 		View cancelButton = main.findViewById(R.id.cancel_button);
 		AndroidUtils.setBackground(app, cancelButton, nightMode, R.color.card_and_list_background_light, R.color.card_and_list_background_dark);
-		main.findViewById(R.id.cancel_button).setOnClickListener(new View.OnClickListener() {
+		cancelButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				clickRouteCancel();
