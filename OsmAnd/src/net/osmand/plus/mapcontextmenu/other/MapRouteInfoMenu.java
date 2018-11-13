@@ -3,7 +3,6 @@ package net.osmand.plus.mapcontextmenu.other;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
-import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -16,7 +15,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.ListPopupWindow;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,10 +30,7 @@ import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.github.mikephil.charting.listener.ChartTouchListener;
-import com.github.mikephil.charting.listener.OnChartGestureListener;
 
 import net.osmand.AndroidUtils;
 import net.osmand.Location;
@@ -47,7 +42,6 @@ import net.osmand.plus.ApplicationMode;
 import net.osmand.plus.GPXUtilities;
 import net.osmand.plus.GeocodingLookupService;
 import net.osmand.plus.GeocodingLookupService.AddressLookupRequest;
-import net.osmand.plus.GpxSelectionHelper;
 import net.osmand.plus.MapMarkersHelper;
 import net.osmand.plus.MapMarkersHelper.MapMarker;
 import net.osmand.plus.OsmAndFormatter;
@@ -79,8 +73,6 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
-import static net.osmand.binary.RouteDataObject.HEIGHT_UNDEFINED;
 
 public class MapRouteInfoMenu implements IRouteInformationListener {
 
@@ -120,12 +112,10 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 	private int currentMenuState;
 	private boolean portraitMode;
 	private GPXUtilities.GPXFile gpx;
-	private RoutingHelper helper;
 	private View view;
 	private ListView listView;
 	private GpxUiHelper.OrderedLineDataSet elevationDataSet;
 	private GpxUiHelper.OrderedLineDataSet slopeDataSet;
-	private GpxSelectionHelper.GpxDisplayItem gpxItem;
 	private boolean hasHeights;
 
 	private static final long SPINNER_MY_LOCATION_ID = 1;
@@ -438,7 +428,7 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 		Iterator<ApplicationMode> iterator = values.iterator();
 		while (iterator.hasNext()) {
 			ApplicationMode mode = iterator.next();
-			View toggle = createToggle(mapActivity.getLayoutInflater(), (OsmandApplication) mapActivity.getApplication(), (LinearLayout) ll.findViewById(R.id.app_modes_content), mode, true);
+			View toggle = AppModeDialog.createToggle(mapActivity.getLayoutInflater(), (OsmandApplication) mapActivity.getApplication(), R.layout.mode_view_route_preparation, (LinearLayout) ll.findViewById(R.id.app_modes_content), mode, true);
 
 			if (!iterator.hasNext() && toggle.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
 				ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) toggle.getLayoutParams();
@@ -453,45 +443,7 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 	}
 
 	private void makeGpx() {
-		double lastHeight = HEIGHT_UNDEFINED;
-		gpx = new GPXUtilities.GPXFile();
-		List<Location> locations = routingHelper.getRoute().getRouteLocations();
-		if (locations != null) {
-			GPXUtilities.Track track = new GPXUtilities.Track();
-			GPXUtilities.TrkSegment seg = new GPXUtilities.TrkSegment();
-			for (Location l : locations) {
-				GPXUtilities.WptPt point = new GPXUtilities.WptPt();
-				point.lat = l.getLatitude();
-				point.lon = l.getLongitude();
-				if (l.hasAltitude()) {
-					if (!hasHeights) {
-						hasHeights = true;
-					}
-					float h = (float) l.getAltitude();
-					point.ele = h;
-					if (lastHeight == HEIGHT_UNDEFINED && seg.points.size() > 0) {
-						for (GPXUtilities.WptPt pt : seg.points) {
-							if (Double.isNaN(pt.ele)) {
-								pt.ele = h;
-							}
-						}
-					}
-					lastHeight = h;
-				}
-				seg.points.add(point);
-			}
-			track.segments.add(seg);
-			gpx.tracks.add(track);
-
-			String groupName = mapActivity.getMyApplication().getString(R.string.current_route);
-			GpxSelectionHelper.GpxDisplayGroup group = mapActivity.getMyApplication().getSelectedGpxHelper().buildGpxDisplayGroup(gpx, 0, groupName);
-			if (group != null && group.getModifiableList().size() > 0) {
-				gpxItem = group.getModifiableList().get(0);
-				if (gpxItem != null) {
-					gpxItem.route = true;
-				}
-			}
-		}
+		gpx = routingHelper.makeGpx();
 	}
 
 	private void updateControlsButtons(View main) {
@@ -542,7 +494,9 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 		FrameLayout soundButton = mainView.findViewById(R.id.sound_setting_button);
 
 		AndroidUtils.setBackground(app, soundButton, nightMode, R.drawable.btn_border_trans_light, R.drawable.btn_border_trans_dark);
-		AndroidUtils.setForeground(app, soundButton, nightMode, R.drawable.ripple_light, R.drawable.ripple_dark);
+		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+			AndroidUtils.setForeground(app, soundButton, nightMode, R.drawable.ripple_light, R.drawable.ripple_dark);
+		}
 
 		final TextView soundOptionDescription = (TextView) main.findViewById(R.id.sound_setting_button_descr);
 		String text = app.getString(R.string.sound_is, (app.getText(app.getRoutingHelper().getVoiceRouter().isMute() ? R.string.shared_string_off : R.string.shared_string_on)));
@@ -634,7 +588,9 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 		FrameLayout detailsButton = mainView.findViewById(R.id.details_button);
 
 		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.details_button_descr), nightMode, R.drawable.btn_border_trans_light, R.drawable.btn_border_trans_dark);
-		detailsButton.setForeground(ContextCompat.getDrawable(ctx, nightMode ? R.drawable.ripple_dark : R.drawable.ripple_light));
+		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+			detailsButton.setForeground(ContextCompat.getDrawable(ctx, nightMode ? R.drawable.ripple_dark : R.drawable.ripple_light));
+		}
 
 		int color = ContextCompat.getColor(mapActivity, nightMode ? R.color.active_buttons_and_links_dark : R.color.active_buttons_and_links_light);
 
@@ -653,9 +609,9 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 	private void buildHeader(View headerView) {
 		OsmandApplication app = mapActivity.getMyApplication();
 		final LineChart mChart = (LineChart) headerView.findViewById(R.id.chart);
-		GpxUiHelper.setupSimpleGPXChart(app, mChart, 4,!nightMode);
+		final GPXUtilities.GPXTrackAnalysis analysis = gpx.getAnalysis(0);
 
-		GPXUtilities.GPXTrackAnalysis analysis = gpx.getAnalysis(0);
+		GpxUiHelper.setupGPXChart(mChart, 4, 4f, 4f, !nightMode, false);
 		if (analysis.hasElevationData) {
 			List<ILineDataSet> dataSets = new ArrayList<>();
 			elevationDataSet = GpxUiHelper.createGPXElevationDataSet(app, mChart, analysis,
@@ -668,64 +624,7 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 			if (slopeDataSet != null) {
 				dataSets.add(slopeDataSet);
 			}
-			LineData data = new LineData(dataSets);
-			mChart.setData(data);
-
-			mChart.setOnChartGestureListener(new OnChartGestureListener() {
-
-				float highlightDrawX = -1;
-
-				@Override
-				public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
-					if (mChart.getHighlighted() != null && mChart.getHighlighted().length > 0) {
-						highlightDrawX = mChart.getHighlighted()[0].getDrawX();
-					} else {
-						highlightDrawX = -1;
-					}
-				}
-
-				@Override
-				public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
-					gpxItem.chartMatrix = new Matrix(mChart.getViewPortHandler().getMatrixTouch());
-					Highlight[] highlights = mChart.getHighlighted();
-					if (highlights != null && highlights.length > 0) {
-						gpxItem.chartHighlightPos = highlights[0].getX();
-					} else {
-						gpxItem.chartHighlightPos = -1;
-					}
-				}
-
-				@Override
-				public void onChartLongPressed(MotionEvent me) {
-				}
-
-				@Override
-				public void onChartDoubleTapped(MotionEvent me) {
-				}
-
-				@Override
-				public void onChartSingleTapped(MotionEvent me) {
-				}
-
-				@Override
-				public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
-				}
-
-				@Override
-				public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
-				}
-
-				@Override
-				public void onChartTranslate(MotionEvent me, float dX, float dY) {
-					if (highlightDrawX != -1) {
-						Highlight h = mChart.getHighlightByTouchPoint(highlightDrawX, 0f);
-						if (h != null) {
-							mChart.highlightValue(h);
-						}
-					}
-				}
-			});
-
+			mChart.setData(new LineData(dataSets));
 			mChart.setVisibility(View.VISIBLE);
 		} else {
 			elevationDataSet = null;
@@ -747,7 +646,9 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 				iv.setImageDrawable(drawable);
 				iv.setContentDescription(String.format("%s %s", mode.toHumanString(ctx), ctx.getString(R.string.item_checked)));
 				AndroidUtils.setBackground(mapActivity, iv, nightMode, R.drawable.btn_border_trans_light, R.drawable.btn_border_trans_dark);
-				AndroidUtils.setForeground(mapActivity, iv, nightMode, R.drawable.ripple_light, R.drawable.ripple_dark);
+				if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+					AndroidUtils.setForeground(mapActivity, iv, nightMode, R.drawable.ripple_light, R.drawable.ripple_dark);
+				}
 			} else {
 				if (useMapTheme) {
 					Drawable drawable = ctx.getUIUtilities().getIcon(mode.getSmallIconDark(), nightMode ? R.color.route_info_control_icon_color_dark : R.color.route_info_control_icon_color_light);
@@ -757,7 +658,9 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 					}
 					iv.setImageDrawable(drawable);
 					AndroidUtils.setBackground(mapActivity, iv, nightMode, R.drawable.btn_border_pressed_light, R.drawable.btn_border_pressed_dark);
-					AndroidUtils.setForeground(mapActivity, iv, nightMode, R.drawable.ripple_light, R.drawable.ripple_dark);
+					if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+						AndroidUtils.setForeground(mapActivity, iv, nightMode, R.drawable.ripple_light, R.drawable.ripple_dark);
+					}
 				} else {
 					iv.setImageDrawable(ctx.getUIUtilities().getThemedIcon(mode.getSmallIconDark()));
 				}
@@ -819,7 +722,9 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 		FrameLayout viaButton = (FrameLayout) parentView.findViewById(R.id.via_button);
 
 		AndroidUtils.setBackground(mapActivity, viaButton, nightMode, R.drawable.btn_border_trans_rounded_light, R.drawable.btn_border_trans_rounded_dark);
-		AndroidUtils.setForeground(mapActivity, viaButton, nightMode, R.drawable.ripple_rounded_light, R.drawable.ripple_rounded_dark);
+		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+			AndroidUtils.setForeground(mapActivity, viaButton, nightMode, R.drawable.ripple_rounded_light, R.drawable.ripple_rounded_dark);
+		}
 
 		ImageView viaButtonImageView = (ImageView) parentView.findViewById(R.id.via_button_image_view);
 
@@ -838,19 +743,6 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 				}
 			}
 		});
-	}
-
-
-	private View createToggle(LayoutInflater layoutInflater, OsmandApplication ctx, LinearLayout layout, ApplicationMode mode, boolean useMapTheme) {
-		int metricsX = (int) ctx.getResources().getDimension(R.dimen.route_info_modes_height);
-		int metricsY = (int) ctx.getResources().getDimension(R.dimen.route_info_modes_height);
-		View tb = layoutInflater.inflate(R.layout.mode_view_route_preparation, null);
-		ImageView iv = (ImageView) tb.findViewById(R.id.app_mode_icon);
-		iv.setImageDrawable(ctx.getUIUtilities().getIcon(mode.getSmallIconDark(), nightMode ? R.color.active_buttons_and_links_dark : R.color.active_buttons_and_links_light));
-		iv.setContentDescription(mode.toHumanString(ctx));
-		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(metricsX, metricsY);
-		layout.addView(tb, lp);
-		return tb;
 	}
 
 	private void updateToSpinner(final View parentView) {
@@ -907,7 +799,9 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 		final FrameLayout toButton = (FrameLayout) parentView.findViewById(R.id.to_button);
 
 		AndroidUtils.setBackground(mapActivity, toButton, nightMode, R.drawable.btn_border_trans_rounded_light, R.drawable.btn_border_trans_rounded_dark);
-		AndroidUtils.setForeground(mapActivity, toButton, nightMode, R.drawable.ripple_rounded_light, R.drawable.ripple_rounded_dark);
+		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+			AndroidUtils.setForeground(mapActivity, toButton, nightMode, R.drawable.ripple_rounded_light, R.drawable.ripple_rounded_dark);
+		}
 
 		ImageView toButtonImageView = (ImageView) parentView.findViewById(R.id.to_button_image_view);
 
@@ -1027,7 +921,10 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 		FrameLayout fromButton = (FrameLayout) parentView.findViewById(R.id.from_button);
 
 		AndroidUtils.setBackground(mapActivity, fromButton, nightMode, R.drawable.btn_border_trans_rounded_light, R.drawable.btn_border_trans_rounded_dark);
-		AndroidUtils.setForeground(mapActivity, fromButton, nightMode, R.drawable.ripple_rounded_light, R.drawable.ripple_rounded_dark);
+
+		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+			AndroidUtils.setForeground(mapActivity, fromButton, nightMode, R.drawable.ripple_rounded_light, R.drawable.ripple_rounded_dark);
+		}
 
 		ImageView swapDirectionView = (ImageView) parentView.findViewById(R.id.from_button_image_view);
 

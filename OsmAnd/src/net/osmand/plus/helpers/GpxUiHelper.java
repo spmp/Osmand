@@ -67,12 +67,12 @@ import net.osmand.plus.GPXUtilities.GPXTrackAnalysis;
 import net.osmand.plus.GPXUtilities.Speed;
 import net.osmand.plus.GPXUtilities.TrkSegment;
 import net.osmand.plus.GpxSelectionHelper.SelectedGpxFile;
-import net.osmand.plus.UiUtilities;
 import net.osmand.plus.OsmAndFormatter;
 import net.osmand.plus.OsmandApplication;
 import net.osmand.plus.OsmandPlugin;
 import net.osmand.plus.OsmandSettings;
 import net.osmand.plus.R;
+import net.osmand.plus.UiUtilities;
 import net.osmand.plus.activities.ActivityResultListener;
 import net.osmand.plus.activities.ActivityResultListener.OnActivityResultListener;
 import net.osmand.plus.activities.MapActivity;
@@ -967,78 +967,19 @@ public class GpxUiHelper {
 	public static void setupGPXChart(OsmandApplication ctx, LineChart mChart, int yLabelsCount) {
 		OsmandSettings settings = ctx.getSettings();
 		boolean light = settings.isLightContent();
-
-		if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-			mChart.setHardwareAccelerationEnabled(false);
-		} else {
-			mChart.setHardwareAccelerationEnabled(true);
-		}
-		mChart.setTouchEnabled(true);
-		mChart.setDragEnabled(true);
-		mChart.setScaleEnabled(true);
-		mChart.setPinchZoom(true);
-		mChart.setScaleYEnabled(false);
-		mChart.setAutoScaleMinMaxEnabled(true);
-		mChart.setDrawBorders(false);
-		mChart.getDescription().setEnabled(false);
-		mChart.setMaxVisibleValueCount(10);
-		mChart.setMinOffset(0f);
-		mChart.setDragDecelerationEnabled(false);
-
-		mChart.setExtraTopOffset(24f);
-		mChart.setExtraBottomOffset(16f);
-
-		// create a custom MarkerView (extend MarkerView) and specify the layout
-		// to use for it
-		GPXMarkerView mv = new GPXMarkerView(mChart.getContext());
-		mv.setChartView(mChart); // For bounds control
-		mChart.setMarker(mv); // Set the marker to the chart
-		mChart.setDrawMarkers(true);
-
-		XAxis xAxis = mChart.getXAxis();
-		xAxis.setDrawAxisLine(false);
-		xAxis.setDrawGridLines(true);
-		xAxis.setGridLineWidth(1.5f);
-		xAxis.setGridColor(ActivityCompat.getColor(mChart.getContext(), R.color.gpx_chart_black_grid));
-		xAxis.enableGridDashedLine(25f, Float.MAX_VALUE, 0f);
-		xAxis.setPosition(BOTTOM);
-		xAxis.setTextColor(light ? mChart.getResources().getColor(R.color.secondary_text_light) : mChart.getResources().getColor(R.color.secondary_text_dark));
-
-		YAxis yAxis = mChart.getAxisLeft();
-		yAxis.enableGridDashedLine(10f, 5f, 0f);
-		yAxis.setGridColor(ActivityCompat.getColor(mChart.getContext(), R.color.divider_color));
-		yAxis.setDrawAxisLine(false);
-		yAxis.setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART);
-		yAxis.setXOffset(16f);
-		yAxis.setYOffset(-6f);
-		yAxis.setLabelCount(yLabelsCount);
-		yAxis.setTextColor(light ? mChart.getResources().getColor(R.color.secondary_text_light) : mChart.getResources().getColor(R.color.secondary_text_dark));
-
-		yAxis = mChart.getAxisRight();
-		yAxis.enableGridDashedLine(10f, 5f, 0f);
-		yAxis.setGridColor(ActivityCompat.getColor(mChart.getContext(), R.color.divider_color));
-		yAxis.setDrawAxisLine(false);
-		yAxis.setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART);
-		yAxis.setXOffset(16f);
-		yAxis.setYOffset(-6f);
-		yAxis.setLabelCount(yLabelsCount);
-		yAxis.setTextColor(light ? mChart.getResources().getColor(R.color.secondary_text_light) : mChart.getResources().getColor(R.color.secondary_text_dark));
-		yAxis.setEnabled(false);
-
-		Legend legend = mChart.getLegend();
-		legend.setEnabled(false);
+		setupGPXChart(mChart, yLabelsCount, 24f, 16f, light, false);
 	}
 
-	public static void setupSimpleGPXChart(OsmandApplication ctx, LineChart mChart, int yLabelsCount, boolean light) {
+	public static void setupGPXChart(LineChart mChart, int yLabelsCount, float topOffset, float bottomOffset, boolean light, boolean useGesturesAndScale) {
 		if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
 			mChart.setHardwareAccelerationEnabled(false);
 		} else {
 			mChart.setHardwareAccelerationEnabled(true);
 		}
-		mChart.setTouchEnabled(false);
-		mChart.setDragEnabled(false);
-		mChart.setScaleEnabled(false);
-		mChart.setPinchZoom(false);
+		mChart.setTouchEnabled(useGesturesAndScale);
+		mChart.setDragEnabled(useGesturesAndScale);
+		mChart.setScaleEnabled(useGesturesAndScale);
+		mChart.setPinchZoom(useGesturesAndScale);
 		mChart.setScaleYEnabled(false);
 		mChart.setAutoScaleMinMaxEnabled(true);
 		mChart.setDrawBorders(false);
@@ -1047,8 +988,8 @@ public class GpxUiHelper {
 		mChart.setMinOffset(0f);
 		mChart.setDragDecelerationEnabled(false);
 
-		mChart.setExtraTopOffset(4f);
-		mChart.setExtraBottomOffset(4f);
+		mChart.setExtraTopOffset(topOffset);
+		mChart.setExtraBottomOffset(bottomOffset);
 
 		// create a custom MarkerView (extend MarkerView) and specify the layout
 		// to use for it

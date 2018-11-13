@@ -731,9 +731,7 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 	public void updateControlButtons() {
 		OsmandApplication app = getMyApplication();
 		if (app != null) {
-			boolean routeCalculated = menu.isRouteCalculated();
-
-			if (routeCalculated) {
+			if (menu.isRouteCalculated()) {
 				AndroidUtils.setBackground(app, view.findViewById(R.id.start_button), nightMode,
 						R.color.active_buttons_and_links_light, R.color.active_buttons_and_links_dark);
 				int color = nightMode ? R.color.main_font_dark : R.color.card_and_list_background_light;

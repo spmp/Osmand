@@ -6,6 +6,7 @@ import net.osmand.PlatformUtil;
 import net.osmand.ValueHolder;
 import net.osmand.data.LatLon;
 import net.osmand.plus.ApplicationMode;
+import net.osmand.plus.GPXUtilities;
 import net.osmand.plus.GPXUtilities.GPXFile;
 import net.osmand.plus.NavigationService;
 import net.osmand.plus.OsmAndFormatter;
@@ -30,6 +31,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import static net.osmand.binary.RouteDataObject.HEIGHT_UNDEFINED;
 import static net.osmand.plus.notifications.OsmandNotification.NotificationType.NAVIGATION;
 
 public class RoutingHelper {
@@ -975,6 +977,38 @@ public class RoutingHelper {
 			}
 			startRouteCalculationThread(params, paramsChanged, updateProgress);
 		}
+	}
+
+	public GPXFile makeGpx() {
+		double lastHeight = HEIGHT_UNDEFINED;
+		GPXFile gpx = new GPXUtilities.GPXFile();
+		List<Location> locations = route.getRouteLocations();
+		if (locations != null) {
+			GPXUtilities.Track track = new GPXUtilities.Track();
+			GPXUtilities.TrkSegment seg = new GPXUtilities.TrkSegment();
+			for (Location l : locations) {
+				GPXUtilities.WptPt point = new GPXUtilities.WptPt();
+				point.lat = l.getLatitude();
+				point.lon = l.getLongitude();
+				if (l.hasAltitude()) {
+					gpx.hasAltitude = true;
+					float h = (float) l.getAltitude();
+					point.ele = h;
+					if (lastHeight == HEIGHT_UNDEFINED && seg.points.size() > 0) {
+						for (GPXUtilities.WptPt pt : seg.points) {
+							if (Double.isNaN(pt.ele)) {
+								pt.ele = h;
+							}
+						}
+					}
+					lastHeight = h;
+				}
+				seg.points.add(point);
+			}
+			track.segments.add(seg);
+			gpx.tracks.add(track);
+		}
+		return gpx;
 	}
 
 	public void startRouteCalculationThread(RouteCalculationParams params, boolean paramsChanged, boolean updateProgress) {

@@ -803,6 +803,7 @@ public class GPXUtilities {
 		public String path = "";
 		public boolean showCurrentTrack;
 		public long modifiedTime = 0;
+		public boolean hasAltitude;
 
 		private Track generalTrack;
 		private TrkSegment generalSegment;
