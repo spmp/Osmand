@@ -36,7 +36,6 @@
 				android:paddingLeft="16dp"
 				android:paddingRight="16dp"
 				android:text="@string/shared_string_cancel"
-				android:textColor="?attr/wikivoyage_active_color"
 				android:textSize="@dimen/text_button_text_size"
 				osmand:typeface="@string/font_roboto_medium"
 				tools:ignore="UnusedAttribute" />
@@ -69,7 +68,6 @@
 				android:paddingLeft="16dp"
 				android:paddingRight="16dp"
 				android:text="@string/shared_string_control_start"
-				android:textColor="?attr/wikivoyage_active_color"
 				android:textSize="@dimen/text_button_text_size"
 				osmand:typeface="@string/font_roboto_medium"
 				tools:ignore="UnusedAttribute" />

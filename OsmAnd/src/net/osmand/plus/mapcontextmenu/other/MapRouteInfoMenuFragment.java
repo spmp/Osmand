@@ -134,7 +134,7 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 			mainView.setBackgroundResource(typedValueAttr.resourceId);
 			mainView.setLayoutParams(new FrameLayout.LayoutParams(getResources().getDimensionPixelSize(R.dimen.dashboard_land_width), ViewGroup.LayoutParams.MATCH_PARENT));
 
-			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(AndroidUtils.dpToPx(getMyApplication(), 345f), ViewGroup.LayoutParams.WRAP_CONTENT);
+			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(AndroidUtils.dpToPx(getMyApplication(), 345f), ViewGroup.LayoutParams.WRAP_CONTENT);
 
 			params.gravity = Gravity.BOTTOM;
 			view.findViewById(R.id.control_buttons).setLayoutParams(params);
@@ -778,17 +778,17 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 			AndroidUtils.setBackground(ctx, mainView, nightMode, R.drawable.route_info_menu_bg_left_light, R.drawable.route_info_menu_bg_left_dark);
 		}
 		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.dividerFromDropDown), nightMode,
-				R.color.route_info_divider_light, R.color.route_info_divider_dark);
+				R.color.divider_light, R.color.divider_dark);
 		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.viaLayoutDivider), nightMode,
-				R.color.route_info_divider_light, R.color.route_info_divider_dark);
+				R.color.divider_light, R.color.divider_dark);
 		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.dividerButtons), nightMode,
-				R.color.route_info_divider_light, R.color.route_info_divider_dark);
+				R.color.divider_light, R.color.divider_dark);
 		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.app_modes_options_container), nightMode,
 				R.drawable.route_info_trans_gradient_light, R.drawable.route_info_trans_gradient_dark);
 		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.dividerToDropDown), nightMode,
-				R.color.route_info_divider_light, R.color.route_info_divider_dark);
+				R.color.divider_light, R.color.divider_dark);
 		AndroidUtils.setBackground(ctx, view.findViewById(R.id.dividerControlButtons), nightMode,
-				R.color.route_info_divider_light, R.color.route_info_divider_dark);
+				R.color.divider_light, R.color.divider_dark);
 		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.info_divider), nightMode,
 				R.color.activity_background_light, R.color.route_info_cancel_button_color_dark);
 		AndroidUtils.setBackground(ctx, mainView.findViewById(R.id.route_info_details_card), nightMode,
