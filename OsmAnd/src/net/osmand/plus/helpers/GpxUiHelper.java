@@ -37,12 +37,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.ChartData;
 import com.github.mikephil.charting.data.DataSet;
 import com.github.mikephil.charting.data.Entry;
@@ -83,7 +88,9 @@ import net.osmand.plus.dialogs.ConfigureMapMenu.AppearanceListItem;
 import net.osmand.plus.dialogs.ConfigureMapMenu.GpxAppearanceAdapter;
 import net.osmand.plus.monitoring.OsmandMonitoringPlugin;
 import net.osmand.render.RenderingRuleProperty;
+import net.osmand.render.RenderingRuleSearchRequest;
 import net.osmand.render.RenderingRulesStorage;
+import net.osmand.router.RouteStatistics;
 import net.osmand.util.Algorithms;
 import net.osmand.util.MapUtils;
 
@@ -1031,7 +1038,7 @@ public class GpxUiHelper {
 		legend.setEnabled(false);
 	}
 
-	private static float setupXAxisDistance(OsmandApplication ctx, XAxis xAxis, float meters) {
+	private static float setupXAxisDistance(OsmandApplication ctx, AxisBase xAxis, float meters) {
 		OsmandSettings settings = ctx.getSettings();
 		OsmandSettings.MetricsConstants mc = settings.METRIC_SYSTEM.get();
 		float divX;
@@ -1585,6 +1592,59 @@ public class GpxUiHelper {
 		}
 		return dataSet;
 	}
+
+	public static <E> void buildRouteBarChart(final OsmandApplication app,
+												  BarChart barChart,
+												  RouteStatistics.Statistics<E> routeStatistics) {
+		List<RouteStatistics.RouteSegmentAttribute<E>> segments = routeStatistics.getElements();
+		boolean nightMode = app.getSettings().isLightContent();
+		int size = segments.size();
+		List<BarEntry> entries = new ArrayList<>();
+		float[] stacks = new float[size];
+		int[] colors = new int[size];
+		for (int i = 0; i < stacks.length; i++) {
+			RouteStatistics.RouteSegmentAttribute<E> segment = segments.get(i);
+			stacks[i] = segment.getDistance();
+			colors[i] = getColorFromStyle(app.getRendererRegistry().getCurrentSelectedRenderer(),
+					segment.getColorAttrName(), nightMode);
+		}
+		entries.add(new BarEntry(0, stacks));
+		BarDataSet barDataSet = new BarDataSet(entries, "");
+		barDataSet.setColors(colors);
+		BarData data = new BarData(barDataSet);
+		data.setDrawValues(false);
+		barChart.setData(data);
+		barChart.setDrawBorders(false);
+		barChart.setTouchEnabled(false);
+		barChart.disableScroll();
+		barChart.getLegend().setEnabled(false);
+		barChart.getDescription().setEnabled(false);
+		barChart.getXAxis().setEnabled(false);;
+		barChart.getAxisLeft().setEnabled(false);
+
+		YAxis rightYAxis = barChart.getAxisRight();
+		rightYAxis.setDrawLabels(true);
+		rightYAxis.setGranularity(1f);
+		rightYAxis.setDrawGridLines(false);
+		final float divX = setupXAxisDistance(app, rightYAxis, routeStatistics.getTotalDistance());
+		rightYAxis.setValueFormatter(new IAxisValueFormatter() {
+			@Override
+			public String getFormattedValue(float value, AxisBase axis) {
+				return OsmAndFormatter.getFormattedDistance(value, app);
+			}
+		});
+	}
+
+	public static int getColorFromStyle(RenderingRulesStorage rrs, String colorAttrName, boolean nightMode) {
+		RenderingRuleSearchRequest req = new RenderingRuleSearchRequest(rrs);
+		req.setBooleanFilter(rrs.PROPS.R_NIGHT_MODE, nightMode);
+		if (req.searchRenderingAttribute(colorAttrName)) {
+			return req.getIntPropertyValue(rrs.PROPS.R_ATTR_COLOR_VALUE);
+		}
+		return 0;
+	}
+
+
 
 	public enum GPXDataSetType {
 		ALTITUDE(R.string.altitude, R.drawable.ic_action_altitude_average),

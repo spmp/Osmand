@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -101,6 +102,7 @@ public class ShowRouteInfoDialogFragment extends DialogFragment {
 	private OrderedLineDataSet elevationDataSet;
 	private OrderedLineDataSet slopeDataSet;
 	private GpxDisplayItem gpxItem;
+	private boolean isLightTheme;
 
 	public ShowRouteInfoDialogFragment() {
 	}
@@ -112,7 +114,7 @@ public class ShowRouteInfoDialogFragment extends DialogFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		boolean isLightTheme = getMyApplication().getSettings().OSMAND_THEME.get() == OsmandSettings.OSMAND_LIGHT_THEME;
+		isLightTheme = getMyApplication().getSettings().OSMAND_THEME.get() == OsmandSettings.OSMAND_LIGHT_THEME;
 		int themeId = isLightTheme ? R.style.OsmandLightThemeWithLightStatusBar : R.style.OsmandDarkTheme;
 		setStyle(STYLE_NO_FRAME, themeId);
 	}
@@ -207,7 +209,7 @@ public class ShowRouteInfoDialogFragment extends DialogFragment {
 			listView.addHeaderView(headerView);
 		}
 
-		List<Incline> inclines = createInclinesAndAdd100MetersWith0Incline(slopeDataSet.getValues());
+		List<Incline> inclines = createInclinesAndAdd100MetersWith0Incline(slopeDataSet.getValues(), slopeDataSet.getDivX());
 
 		RouteStatistics routeStatistics = RouteStatistics.newRouteStatistic(helper.getRoute().getOriginalRoute());
 		buildChartAndAttachLegend(app, view, inflater, R.id.route_class_stat_chart,
@@ -221,89 +223,53 @@ public class ShowRouteInfoDialogFragment extends DialogFragment {
 		return view;
 	}
 
-	private List<Incline> createInclinesAndAdd100MetersWith0Incline(List<Entry> entries) {
+	private List<Incline> createInclinesAndAdd100MetersWith0Incline(List<Entry> entries, float divX) {
 		int size = entries.size();
 		List<Incline> inclines = new ArrayList<>();
 		for (Entry entry : entries) {
-			Incline incline = new Incline(entry.getY(), entry.getX() * 1000);
+			Incline incline = new Incline(entry.getY(), entry.getX() * divX);
 			inclines.add(incline);
 
 		}
 		for (int i = 0; i < 10; i++) {
-			float distance = i * 5;
+			float distance = i * 5f;
 			inclines.add(i, new Incline(0f, distance));
 		}
 		float lastDistance = slopeDataSet.getEntryForIndex(size - 1).getX();
 		for (int i = 1; i <= 10; i++) {
-			float distance = lastDistance * 1000f + i * 5f;
+			float distance = lastDistance * divX + i * 5f;
 			inclines.add(new Incline(0f, distance));
 		}
 		return inclines;
 	}
 
-	private int getColorFromStyle(String colorAttrName) {
-		RenderingRulesStorage rrs = getMyApplication().getRendererRegistry().getCurrentSelectedRenderer();
+	private int getColorFromStyle(String colorAttrName, RenderingRulesStorage rrs) {
 		RenderingRuleSearchRequest req = new RenderingRuleSearchRequest(rrs);
-		boolean nightMode = false;
-		req.setBooleanFilter(rrs.PROPS.R_NIGHT_MODE, nightMode);
+		req.setBooleanFilter(rrs.PROPS.R_NIGHT_MODE, !isLightTheme);
 		if (req.searchRenderingAttribute(colorAttrName)) {
 			return req.getIntPropertyValue(rrs.PROPS.R_ATTR_COLOR_VALUE);
 		}
 		return 0;
 	}
 
-	private <E> void buildStatisticChart(View view, int chartId, Statistics<E> routeStatistics) {
-		List<RouteSegmentAttribute<E>> segments = routeStatistics.getElements();
-		HorizontalBarChart hbc = view.findViewById(chartId);
-		List<BarEntry> entries = new ArrayList<>();
-		float[] stacks = new float[segments.size()];
-		int[] colors = new int[segments.size()];
-		for (int i = 0; i < stacks.length; i++) {
-			RouteSegmentAttribute segment = segments.get(i);
-			stacks[i] = segment.getDistance();
-			colors[i] = getColorFromStyle(segment.getColorAttrName());
-		}
-		entries.add(new BarEntry(0, stacks));
-		BarDataSet barDataSet = new BarDataSet(entries, "");
-		barDataSet.setColors(colors);
-		BarData data = new BarData(barDataSet);
-		data.setDrawValues(false);
-		hbc.setData(data);
-		hbc.setDrawBorders(false);
-		hbc.setTouchEnabled(false);
-		hbc.disableScroll();
-		hbc.getLegend().setEnabled(false);
-		hbc.getDescription().setEnabled(false);
-		XAxis xAxis = hbc.getXAxis();
-		xAxis.setEnabled(false);
-		YAxis leftYAxis = hbc.getAxisLeft();
-		YAxis rightYAxis = hbc.getAxisRight();
-		rightYAxis.setDrawLabels(true);
-		rightYAxis.setGranularity(1f);
-		rightYAxis.setValueFormatter(new IAxisValueFormatter() {
-			@Override
-			public String getFormattedValue(float value, AxisBase axis) {
-				if (value > 100) {
-					return String.valueOf(value);
-				}
-				return "";
-			}
-		});
-		rightYAxis.setDrawGridLines(false);
-		leftYAxis.setDrawLabels(false);
-		leftYAxis.setEnabled(false);
-		hbc.invalidate();
-	}
+
+
+//	private <E> void buildStatisticChart(View view, int chartId, Statistics<E> routeStatistics) {
+//
+//	}
+
+
 
 	private <E> void attachLegend(OsmandApplication app, LayoutInflater inflater, ViewGroup container, Statistics<E> routeStatistics) {
 		Map<E, RouteSegmentAttribute<E>> partition = routeStatistics.getPartition();
+		RenderingRulesStorage rrs = app.getRendererRegistry().getCurrentSelectedRenderer();
 		for (E key : partition.keySet()) {
 			RouteSegmentAttribute<E> segment = partition.get(key);
 			View view = inflater.inflate(R.layout.route_info_stat_item, container, false);
 			TextView textView = view.findViewById(R.id.route_stat_item_text);
 			String formattedDistance = OsmAndFormatter.getFormattedDistance(segment.getDistance(), getMyApplication());
 			textView.setText(String.format("%s - %s", key, formattedDistance));
-			Drawable circle = app.getUIUtilities().getPaintedIcon(R.drawable.ic_action_circle,getColorFromStyle(segment.getColorAttrName()));
+			Drawable circle = app.getUIUtilities().getPaintedIcon(R.drawable.ic_action_circle, getColorFromStyle(segment.getColorAttrName(), rrs));
 			ImageView imageView = view.findViewById(R.id.route_stat_item_image);
 			imageView.setImageDrawable(circle);
 			container.addView(view);
@@ -312,8 +278,10 @@ public class ShowRouteInfoDialogFragment extends DialogFragment {
 
 	private void buildChartAndAttachLegend(OsmandApplication app, View view, LayoutInflater inflater, int chartId, int containerId, Statistics routeStatistics) {
 		ViewGroup container = view.findViewById(containerId);
-		buildStatisticChart(view, chartId, routeStatistics);
+		BarChart barChart = view.findViewById(chartId);
+		GpxUiHelper.buildRouteBarChart(app, barChart, routeStatistics);
 		attachLegend(app, inflater, container, routeStatistics);
+		barChart.invalidate();
 	}
 
 	private void makeGpx() {
