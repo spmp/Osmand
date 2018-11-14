@@ -273,7 +273,8 @@
 	<dimen name="route_info_end_divider_margin">56dp</dimen>
 	<dimen name="route_info_modes_height">48dp</dimen>
 	<dimen name="route_info_list_item_height">48dp</dimen>
-	<dimen name="route_info_buttons_height">32dp</dimen>
+	<dimen name="route_info_buttons_height">36dp</dimen>
+	<dimen name="route_info_settings_buttons_height">32dp</dimen>
 	<dimen name="route_info_app_modes_padding">40dp</dimen>
 
 	<dimen name="multi_selection_header_height">52dp</dimen>

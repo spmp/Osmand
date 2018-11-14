@@ -156,7 +156,6 @@
 				android:layout_width="match_parent"
 				android:layout_height="36dp"
 				android:layout_gravity="center"
-				android:background="?attr/selectableItemBackground"
 				android:ellipsize="end"
 				android:gravity="center"
 				android:letterSpacing="@dimen/text_button_letter_spacing"
