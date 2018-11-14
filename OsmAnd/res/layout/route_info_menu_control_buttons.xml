@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:osmand="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
-	android:background="?attr/wikivoyage_card_bg_color"
 	android:layout_height="wrap_content"
-	xmlns:osmand="http://schemas.android.com/apk/res-auto"
 	android:orientation="vertical">
 
 	<View
@@ -16,6 +15,7 @@
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="48dp"
+		android:baselineAligned="false"
 		android:orientation="horizontal">
 
 		<FrameLayout
@@ -36,7 +36,6 @@
 				android:paddingLeft="16dp"
 				android:paddingRight="16dp"
 				android:text="@string/shared_string_cancel"
-				android:textColor="?attr/wikivoyage_active_color"
 				android:textSize="@dimen/text_button_text_size"
 				osmand:typeface="@string/font_roboto_medium"
 				tools:ignore="UnusedAttribute" />
@@ -69,7 +68,6 @@
 				android:paddingLeft="16dp"
 				android:paddingRight="16dp"
 				android:text="@string/shared_string_control_start"
-				android:textColor="?attr/wikivoyage_active_color"
 				android:textSize="@dimen/text_button_text_size"
 				osmand:typeface="@string/font_roboto_medium"
 				tools:ignore="UnusedAttribute" />
