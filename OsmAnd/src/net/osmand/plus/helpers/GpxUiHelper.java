@@ -966,8 +966,7 @@ public class GpxUiHelper {
 
 	public static void setupGPXChart(OsmandApplication ctx, LineChart mChart, int yLabelsCount) {
 		OsmandSettings settings = ctx.getSettings();
-		boolean light = settings.isLightContent();
-		setupGPXChart(mChart, yLabelsCount, 24f, 16f, light, false);
+		setupGPXChart(mChart, yLabelsCount, 24f, 16f, settings.isLightContent(), true);
 	}
 
 	public static void setupGPXChart(LineChart mChart, int yLabelsCount, float topOffset, float bottomOffset, boolean light, boolean useGesturesAndScale) {
