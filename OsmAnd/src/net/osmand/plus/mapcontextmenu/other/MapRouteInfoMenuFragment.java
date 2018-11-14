@@ -310,6 +310,7 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 		if (menu == null) {
 			dismiss();
 		}
+		menu.addTargetPointListener();
 		ViewParent parent = view.getParent();
 		if (parent != null && containerLayoutListener != null) {
 			((View) parent).addOnLayoutChangeListener(containerLayoutListener);

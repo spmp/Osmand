@@ -221,7 +221,7 @@
 							android:layout_marginBottom="3dp"
 							android:layout_marginTop="5dp"
 							android:gravity="left"
-							android:text="@string/route_via"
+							android:text="@string/intermediate_destinations"
 							android:textSize="@dimen/default_sub_text_size" />
 
 						<TextView
@@ -433,8 +433,8 @@
 							android:gravity="center"
 							android:letterSpacing="@dimen/text_button_letter_spacing"
 							android:maxLines="1"
-							android:paddingEnd="@dimen/content_padding_small"
 							android:paddingRight="@dimen/content_padding_small"
+							android:paddingLeft="@dimen/content_padding_small"
 							android:textSize="@dimen/text_button_text_size"
 							osmand:typeface="@string/font_roboto_medium"
 							tools:background="@drawable/btn_border_trans_dark"

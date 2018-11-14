@@ -34,6 +34,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import net.osmand.AndroidUtils;
 import net.osmand.Location;
+import net.osmand.StateChangedListener;
 import net.osmand.ValueHolder;
 import net.osmand.data.LatLon;
 import net.osmand.data.PointDescription;
@@ -107,6 +108,7 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 	private OnDismissListener onDismissListener;
 
 	private OnMarkerSelectListener onMarkerSelectListener;
+	private StateChangedListener<Void> onStateChangedListener;
 	private View mainView;
 
 	private int currentMenuState;
@@ -150,6 +152,12 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 			@Override
 			public void onSelect(int index, boolean target, boolean intermediate) {
 				selectMapMarker(index, target, intermediate);
+			}
+		};
+		onStateChangedListener = new StateChangedListener<Void>() {
+			@Override
+			public void stateChanged(Void change) {
+				updateMenu();
 			}
 		};
 	}
@@ -200,6 +208,14 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 
 	public OnMarkerSelectListener getOnMarkerSelectListener() {
 		return onMarkerSelectListener;
+	}
+
+	public void addTargetPointListener() {
+		app.getTargetPointsHelper().addListener(onStateChangedListener);
+	}
+
+	private void removeTargetPointListener() {
+		app.getTargetPointsHelper().removeListener(onStateChangedListener);
 	}
 
 	private void cancelStartPointAddressRequest() {
@@ -407,7 +423,6 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 				}
 			}
 		};
-		OsmandSettings settings = mapActivity.getMyApplication().getSettings();
 		final List<ApplicationMode> values = new ArrayList<ApplicationMode>(ApplicationMode.values(mapActivity.getMyApplication()));
 		values.remove(ApplicationMode.DEFAULT);
 
@@ -705,6 +720,7 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 			viaLayout.setVisibility(View.VISIBLE);
 			viaLayoutDivider.setVisibility(View.VISIBLE);
 			((TextView) parentView.findViewById(R.id.ViaView)).setText(via);
+			((TextView) parentView.findViewById(R.id.ViaSubView)).setText(app.getString(R.string.intermediate_destinations, getTargets().getIntermediatePoints().size()));
 		}
 
 		viaLayout.setOnClickListener(new View.OnClickListener() {
@@ -1310,6 +1326,7 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 		if (onDismissListener != null) {
 			onDismissListener.onDismiss(null);
 		}
+		removeTargetPointListener();
 	}
 
 	public void show() {
