@@ -166,6 +166,7 @@ public class CarRouteOptionsBottomSheet extends MenuBottomSheetDialogFragment {
 								mapActivity.getDashboard().setDashboardVisibility(false, DashboardOnMap.DashboardType.ROUTE_PREFERENCES);
 								controlsLayer.getMapRouteInfoMenu().hide();
 								app.getAvoidSpecificRoads().showDialog(mapActivity);
+								dismiss();
 							}
 						})
 						.create();
