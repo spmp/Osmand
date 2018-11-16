@@ -59,14 +59,16 @@ public class BottomSheetItemWithCompoundButton extends BottomSheetItemWithDescri
 
 	public void setChecked(boolean checked) {
 		this.checked = checked;
-		compoundButton.setChecked(checked);
+		if (compoundButton != null) {
+			compoundButton.setChecked(checked);
+		}
 	}
 
 	@Override
 	public void inflate(OsmandApplication app, ViewGroup container, boolean nightMode) {
 		super.inflate(app, container, nightMode);
+		compoundButton = (CompoundButton) view.findViewById(R.id.compound_button);
 		if (compoundButton != null) {
-			compoundButton = (CompoundButton) view.findViewById(R.id.compound_button);
 			compoundButton.setChecked(checked);
 			CompoundButtonCompat.setButtonTintList(compoundButton, buttonTintList);
 			compoundButton.setOnCheckedChangeListener(onCheckedChangeListener);
