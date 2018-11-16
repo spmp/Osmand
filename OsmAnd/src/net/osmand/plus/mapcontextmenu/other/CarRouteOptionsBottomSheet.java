@@ -284,9 +284,10 @@ public class CarRouteOptionsBottomSheet extends MenuBottomSheetDialogFragment {
 				final LocalRoutingParameterGroup group = (LocalRoutingParameterGroup) parameter;
 				LocalRoutingParameter selected = group.getSelected(settings);
 				if (selected != null) {
-					builder.setTitle(selected.getText(mapActivity));
+					builder.setTitle(group.getText(mapActivity));
+					builder.setDescription(selected.getText(mapActivity));
 				}
-				builder.setLayoutId(R.layout.bottom_sheet_item_simple);
+				builder.setLayoutId(R.layout.bottom_sheet_item_with_descr_56dp);
 				builder.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -348,7 +349,7 @@ public class CarRouteOptionsBottomSheet extends MenuBottomSheetDialogFragment {
 											mapActivity.getRoutingHelper().recalculateRouteDueToSettingsChange();
 											LocalRoutingParameter selected = group.getSelected(settings);
 											if (selected != null) {
-												item[0].setTitle(selected.getText(mapActivity));
+												item[0].setDescription(selected.getText(mapActivity));
 											}
 										}
 									}
@@ -380,11 +381,6 @@ public class CarRouteOptionsBottomSheet extends MenuBottomSheetDialogFragment {
 			item[0] = builder.create();
 			items.add(item[0]);
 		}
-	}
-
-	private void updateParameters() {
-		ApplicationMode am = routingHelper.getAppMode();
-
 	}
 
 	private void applyRoutingParameter(LocalRoutingParameter rp, boolean isChecked) {
