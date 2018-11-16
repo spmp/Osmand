@@ -789,8 +789,8 @@ public class CarRouteOptionsBottomSheet extends MenuBottomSheetDialogFragment {
 				RouteSimulationItem.KEY),
 
 		PEDESTRIAN(MuteSoundRoutingParameter.KEY,
-				DividerItem.KEY,
 				GeneralRouter.USE_HEIGHT_OBSTACLES,
+				DividerItem.KEY,
 				AvoidRoadsTypesRoutingParameter.KEY,
 				ShowAlongTheRouteItem.KEY,
 				DividerItem.KEY,
