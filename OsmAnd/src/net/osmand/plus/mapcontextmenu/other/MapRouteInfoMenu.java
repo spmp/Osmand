@@ -533,6 +533,12 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 				soundOptionDescription.setText(text);
 			}
 		});
+		main.findViewById(R.id.old_options).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mapActivity.getMapActions().openRoutePreferencesDialog();
+			}
+		});
 	}
 
 	private void clickRouteGo() {
@@ -547,7 +553,7 @@ public class MapRouteInfoMenu implements IRouteInformationListener {
 	}
 
 	private void clickRouteParams() {
-		mapActivity.getMapActions().openRoutePreferencesDialog();
+		CarRouteOptionsBottomSheet.showInstance(mapActivity.getSupportFragmentManager());
 	}
 
 	private void updateRouteButtons(final View mainView) {

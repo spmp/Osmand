@@ -451,9 +451,11 @@
 					</FrameLayout>
 
 					<View
+						android:id="@+id/old_options"
 						android:layout_width="0dp"
 						android:layout_height="match_parent"
-						android:layout_weight="1" />
+						android:layout_weight="1"
+						android:background="?attr/selectableItemBackground" />
 
 					<net.osmand.plus.widgets.TextViewEx
 						android:id="@+id/map_options_route_button"
@@ -565,6 +567,7 @@
 	</android.support.design.widget.AppBarLayout>
 
 	<LinearLayout
+		android:id="@+id/control_buttons"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_gravity="bottom"
@@ -577,7 +580,6 @@
 			android:background="@drawable/bg_contextmenu_shadow_top_light" />
 
 		<include
-			android:id="@+id/control_buttons"
 			layout="@layout/route_info_menu_control_buttons"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"

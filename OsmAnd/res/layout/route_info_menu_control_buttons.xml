@@ -62,7 +62,7 @@
 			<net.osmand.plus.widgets.ImageViewExProgress
 				android:id="@+id/start_icon"
 				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
+				android:layout_height="match_parent"
 				android:padding="@dimen/route_info_icon_padding_left"
 				android:scaleType="fitStart"
 				tools:src="@drawable/ic_action_start_navigation" />

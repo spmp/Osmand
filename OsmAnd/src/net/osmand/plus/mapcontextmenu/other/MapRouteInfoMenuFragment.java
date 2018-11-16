@@ -136,7 +136,7 @@ public class MapRouteInfoMenuFragment extends BaseOsmAndFragment {
 			mainView.setBackgroundResource(typedValueAttr.resourceId);
 			mainView.setLayoutParams(new FrameLayout.LayoutParams(getResources().getDimensionPixelSize(R.dimen.dashboard_land_width), ViewGroup.LayoutParams.MATCH_PARENT));
 
-			LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(AndroidUtils.dpToPx(getMyApplication(), 345f), ViewGroup.LayoutParams.WRAP_CONTENT);
+			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(AndroidUtils.dpToPx(getMyApplication(), 345f), ViewGroup.LayoutParams.WRAP_CONTENT);
 
 			params.gravity = Gravity.BOTTOM;
 			view.findViewById(R.id.control_buttons).setLayoutParams(params);
