@@ -441,7 +441,7 @@ if(analytics) {
 }
 
 allprojects {
-    if (System.getenv("OUT")) {
-        buildDir = "${System.getenv("OUT")}/${rootProject.name}/${project.name}"
+    if (System.getenv("OUT_DIR")) {
+        buildDir = "${System.getenv("OUT_DIR")}/${rootProject.name}/${project.name}"
     }
 }
