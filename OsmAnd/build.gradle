@@ -439,9 +439,3 @@ if(analytics) {
 	println "Apply GMS plugin"
 	apply plugin: 'com.google.gms.google-services'
 }
-
-allprojects {
-    if (System.getenv("OUT_DIR")) {
-        buildDir = "${System.getenv("OUT_DIR")}/${rootProject.name}/${project.name}"
-    }
-}
